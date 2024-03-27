@@ -1,53 +1,39 @@
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
-import { PrismaClient} from '@prisma/client'
-
-
+import { env } from 'process';
+import axios from "axios"
 
 export const auth ={
       providers: [
         CredentialsProvider({
-            name: 'email',
-            credentials: {
-              email: { label: 'email', type: 'text', placeholder: '' },
-              password: { label: 'password', type: 'password', placeholder: '' },
+          name: "Credentials",
+    
+          credentials: {
+            username: {
+              label: "username",
+              type: "text",
+              placeholder: "jsmith",
             },
-            async authorize(credentials: any) {
-              console.log("credentials ",credentials);
-              
-              const prisma = new PrismaClient()
-              const res = await fetch("/your/endpoint", {
-                method: 'POST',
-                body: JSON.stringify(credentials),
-                headers: { "Content-Type": "application/json" }
-              })
-              // const user = await res.json()
-              const user = await prisma.user.findFirst({
-                where:{
-                  email:credentials.email
-                }
-              })
-              console.log(user);
-              
-                return {
-                    id: "user1",
-                    name:"leander",
-                    email:"leanderdsilva06@gmail.com"
-                };
+            email: {
+              label: "email",
+              type: "eamil",
+              placeholder: "jsmith",
             },
-            
-          }),
-          GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID || "",
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET || ""
+            password: { label: "Password", type: "password" },
           },
-          
-          ),
-          GitHubProvider({
-            clientId: process.env.GITHUB_ID || " ",
-            clientSecret: process.env.GITHUB_SECRET || ""
-          })
+    
+          async authorize(credentials, req) {
+            if (!credentials?.username || !credentials?.password) return null;
+            try {
+              const {data} = await axios.get(`${env.BASE_URL}/api/auth/freelancer?username=${credentials?.username}&password=${credentials?.password}`)  
+              return {name:data.username,email:data.email,id:data.id,image:data.image};
+            } catch (e) {
+              console.error(e);
+              return null;
+            }
+          },
+        })
       ],
       secret: process.env.NEXTAUTH_SECRET,
       callbacks:{
@@ -56,12 +42,11 @@ export const auth ={
           return session
         },
         async redirect({ url, baseUrl }:any) {
-          console.log("baseUrl ",baseUrl);
           
           return baseUrl
         }
       },
       pages:{
-            signIn:"/signIn"
+            signIn:"/"
       }
     }
