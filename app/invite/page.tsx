@@ -1,16 +1,12 @@
-import Chats from "@/components/Chats";
-import Form from "@/components/Form";
-import { auth } from "@/lib/auth";
-import { getServerSession } from "next-auth";
+import Form from '@/components/Form'
+import Invite from '@/components/Invite'
+import { auth } from '@/lib/auth'
+import { getServerSession } from 'next-auth'
+import React from 'react'
 
+async function page() {
 
-
-
-export default async function Home() {
-
-const session = await getServerSession(auth)
-console.log("from home ",session);
-
+      const session = await getServerSession(auth)
 
       if(!session){
         return(
@@ -26,9 +22,11 @@ console.log("from home ",session);
         )
       }
 
-      return (
-              <div className="h-screen">
-                    <Chats/>
-              </div>
-)
+  return (
+      <div className="h-screen">
+            <Invite/>
+      </div>
+  )
 }
+
+export default page

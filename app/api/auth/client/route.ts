@@ -17,7 +17,7 @@ export const POST =async (req: NextRequest) => {
             await prisma.user.create({
                   data:{
                         email:data.email,
-                        username:username,
+                        name:username,
                         password: await bcrypt.hash(pass, Number(env?.SALT) || 0 ) 
                   }
                 })
@@ -25,6 +25,6 @@ export const POST =async (req: NextRequest) => {
                 return NextResponse.json(`Email send to ${data.email}`)   
       } catch (error) {
             console.log(error);
-            return NextResponse.json("Soemthing went wrong")
+            return NextResponse.json("Soemthing went wrong",{status:501})
       }
 }

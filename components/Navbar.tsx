@@ -3,14 +3,15 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { MdCancel } from "react-icons/md";
 import { GiHamburgerMenu } from "react-icons/gi";
-
+import { signOut, useSession } from 'next-auth/react';
 
 function Navbar() {
 
-
+  const {data} =  useSession()  
   const links = [
     { id: 1, links: `/`,name:"home" },
-    { id: 2, links: "chat",name:"chat" }
+    { id: 2, links: "/invite",name:"invite" },
+    { id: 3, links: `/user/${data?.user?.id}`,name:"chats" }
   ];
   const [nav, setNav] = useState(false);
   
@@ -31,6 +32,8 @@ function Navbar() {
             </Link>
           </li>
         ))}
+
+        {data && <div onClick={() => signOut()} className="mx-4 cursor-pointer hover:scale-125 duration-300">Logout</div>}
       </ul>
 
       <div
@@ -72,7 +75,9 @@ function Navbar() {
                     {name}
                   </Link>
                 </li>
+                
               ))}
+            {data && <div onClick={() => signOut()} className="py-6 cursor-pointer hover:scale-125 duration-300">Logout</div>}
             </div>
           </ul>
         </div>

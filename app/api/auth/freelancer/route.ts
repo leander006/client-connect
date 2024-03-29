@@ -7,23 +7,24 @@ const prisma = new PrismaClient()
 
 export const GET = async(req: NextRequest) => {
       const { query } = parse(req.url, true)
-      console.log("get request");
+      
       
 
       let username: any= query.username
       let password: any = query.password
+      console.log("get request",username,password);
       if(query.username == undefined || query.password == undefined){
-            return NextResponse.json("Enter email and password")
+            return NextResponse.json("Enter email and password",{ status: 401 })
       }
         try {
               const user = await prisma.user.findFirst({
                   where:{
-                        username:username,
+                        name:username,
                   },
                   select:{
                         id:true,
                         email:true,
-                        username:true,
+                        name:true,
                         image:true,
                         password:true
                   }
@@ -33,12 +34,12 @@ export const GET = async(req: NextRequest) => {
             }  
             const validate = await bcrypt.compare(password,user?.password||"")
             if(!validate){
-                  return NextResponse.json("Enter correct password")   
+                  return NextResponse.json("Enter correct password",{ status: 402 })   
             }
             return NextResponse.json(user)   
         } catch (error) {
               console.log(error);
-              return NextResponse.error
+              return NextResponse.json("Soemthing went wrong",{ status: 501 })
         }
 }
 
@@ -49,7 +50,7 @@ export const POST =async (req: NextRequest) => {
       try {
             const user =  await prisma.user.findFirst({
                   where:{
-                        username:data.username
+                        name:data.username
                   }
             })
 
@@ -58,7 +59,7 @@ export const POST =async (req: NextRequest) => {
             }
             const newUser = await prisma.user.create({
                   data:{
-                        username:data.username,
+                        name:data.username,
                         email:data.email,
                         password: await bcrypt.hash(data.password, Number(env?.SALT) || 0 ) 
                   }
@@ -66,6 +67,6 @@ export const POST =async (req: NextRequest) => {
                 return NextResponse.json(newUser)   
       } catch (error) {
             console.log(error);
-            return NextResponse.json("Soemthing went wrong")
+            return NextResponse.json("Soemthing went wrong",{ status: 501 })
       }
 }

@@ -7,15 +7,16 @@ interface data{
 }
 
 function Input({name,type,onChange}:data) {
+
   return (
-    <div>
-            <label className="mb-2">P{name}</label>
-      <input
-        className="w-full h-12 mb-4 rounded-md p-3 md:mb-8  border border-black"
-        onChange={onChange}
-        type={type}
-        required
-      />
+    <div className="text-primary space-y-2">
+            <label className="mb-2 capitalize">{name}</label>
+            <input
+              className="w-full h-12 mb-4 focus:outline-none rounded-md p-3 md:mb-8  border border-black"
+              onChange={onChange}
+              type={type}
+              required
+            />
     </div>
   )
 }

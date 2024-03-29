@@ -1,50 +1,10 @@
 import { PrismaClient } from '@prisma/client'
 import { NextRequest, NextResponse } from 'next/server'
-import bcrypt from "bcrypt"
-import { env } from 'process'
+
 import { parse } from "url";
 const prisma = new PrismaClient()
 
-export const GET = async(req: NextRequest) => {
-      const { query } = parse(req.url, true)
-      console.log("get request");
-      
-
-      let username: any= query.username
-      let password: any = query.password
-      if(query.username == undefined || query.password == undefined){
-            return NextResponse.json("Enter email and password")
-      }
-        try {
-              const user = await prisma.user.findFirst({
-                  where:{
-                        username:username,
-                  },
-                  select:{
-                        id:true,
-                        email:true,
-                        username:true,
-                        image:true,
-                        password:true
-                  }
-              })
-            if(!user){
-                  return NextResponse.json(null)   
-            }  
-            const validate = await bcrypt.compare(password,user?.password||"")
-            if(!validate){
-                  return NextResponse.json("Enter correct password")   
-            }
-            return NextResponse.json(user)   
-        } catch (error) {
-              console.log(error);
-              return NextResponse.error
-        }
-}
-
-export const POST =async (req: NextRequest) => {
-
-      
+export const POST =async (req: NextRequest) => {    
     const data = await req.json();
       try {
             const newConversation = await prisma.conversation.create({
@@ -52,9 +12,67 @@ export const POST =async (req: NextRequest) => {
                     name:data.name
                   }
                 });
+                await prisma.userConversationRelation.createMany({
+                  data: [
+                    {
+                      userId: data.user1Id,
+                      conversationId: newConversation.id
+                    },
+                    {
+                      userId: data.user2Id,
+                      conversationId: newConversation.id
+                    }
+                  ]
+                });
                 return NextResponse.json(newConversation)   
       } catch (error) {
             console.log(error);
-            return NextResponse.json("Soemthing went wrong")
+            return NextResponse.json("Soemthing went wrong",{status:501})
       }
 }
+
+export const GET = async (req: NextRequest) => {
+      const { query } = parse(req.url, true)
+        try {
+            var conversation: any = {}
+            if(query.id != null){
+                  conversation = await prisma.conversation.findFirst({
+                        where:{
+                              id: Number(query.id)
+                        },
+                        include: {
+                              users: {
+                                select: {
+                                  user: true,
+                                }
+                              },
+                              messages:{
+                                    include:{
+                                          sender:true
+                                    }
+                              }
+                            }
+                    })
+                    if(conversation == null){
+                        return NextResponse.json("conversation with above id does not exist",{status:402}) 
+                    }
+            }
+            else{
+                  conversation = await prisma.conversation.findMany({
+                        include: {
+                              users: {
+                                select: {
+                                  user: true,
+                                }
+                              }
+                        }
+                    })
+            }
+            return NextResponse.json(conversation)   
+        } catch (error) {
+              console.log(error);
+              return NextResponse.json("Soemthing went wrong",{status:501})
+        }
+  }
+ 
+  

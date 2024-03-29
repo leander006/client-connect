@@ -1,6 +1,7 @@
 "use client"
 import { useState } from "react"
 import Message from "./Message"
+import { IoSend } from "react-icons/io5";
 
 function Messages() {
 
@@ -52,8 +53,11 @@ function Messages() {
                         <Message key={m.id} name={m.name} id={m.id} image={m.image} text={m.text}/>
                   ))}
             </div>
-            <div className="w-full">
+            <div className="w-full flex bg-white items-center cursor-pointer pr-2">
                   <input type="text" className="w-full p-3 focus:outline-none text-primary" placeholder="Enter message" />
+                  <div>
+                        <IoSend color="#00A4FF" size={24}/>
+                  </div>
             </div>
       </div>
   )
