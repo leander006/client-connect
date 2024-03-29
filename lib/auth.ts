@@ -15,11 +15,6 @@ export const auth ={
               type: "text",
               placeholder: "jsmith",
             },
-            email: {
-              label: "email",
-              type: "eamil",
-              placeholder: "jsmith",
-            },
             password: { label: "Password", type: "password" },
           },
     
@@ -27,7 +22,9 @@ export const auth ={
             if (!credentials?.username || !credentials?.password) return null;
             try {
               const {data} = await axios.get(`${env.BASE_URL}/api/auth/freelancer?username=${credentials?.username}&password=${credentials?.password}`)  
-              return {name:data.username,email:data.email,id:data.id,image:data.image};
+              console.log(data);
+              
+              return {name:data.name,email:data.email,id:data.id,image:data.image};
             } catch (e) {
               console.error(e);
               return null;

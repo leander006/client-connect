@@ -1,18 +1,15 @@
-import { PrismaClient } from '@prisma/client'
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from "bcrypt"
 import { env } from 'process'
 import { parse } from "url";
-const prisma = new PrismaClient()
+import { prisma } from '@/lib/prisma';
+
 
 export const GET = async(req: NextRequest) => {
       const { query } = parse(req.url, true)
       
-      
-
       let username: any= query.username
       let password: any = query.password
-      console.log("get request",username,password);
       if(query.username == undefined || query.password == undefined){
             return NextResponse.json("Enter email and password",{ status: 401 })
       }
@@ -29,6 +26,7 @@ export const GET = async(req: NextRequest) => {
                         password:true
                   }
               })
+            
             if(!user){
                   return NextResponse.json(null)   
             }  

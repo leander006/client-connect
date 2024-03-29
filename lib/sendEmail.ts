@@ -5,10 +5,12 @@ const nodemailer = require("nodemailer");
 interface body{
   email:string, 
   subject: string, 
-  body: string,
+  title:string,
+  para:string,
+  link:string
 }
 
-export const sendMail = async (p:body) => {
+export const sendMail = async ({email,subject,title,para,link}:body) => {
   try {
     const trasporter = nodemailer.createTransport({
       host: env.HOST,
@@ -20,11 +22,16 @@ export const sendMail = async (p:body) => {
         pass: env.PASSWORD,
       },
     });
+    const htmlContent = `
+    <h1>${title}</h1>
+    <p>${para}</p>
+    <a href="${link}">Link</a>
+  `;
 
     await trasporter.sendMail({
-      to: p.email,
-      subject: p.subject,
-      text: p.body,
+      to: email,
+      subject: subject,
+      html: htmlContent
     });
     console.log("Email send successfully");
   } catch (error) {

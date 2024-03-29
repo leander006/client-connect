@@ -6,8 +6,6 @@ import Button from "./Button"
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import axios from "axios";
-import { auth } from "@/lib/auth";
-import { getServerSession } from "next-auth";
 import Input from "./Input";
 
 
@@ -21,10 +19,11 @@ function Form() {
   
   const submit = async(e: React.FormEvent<HTMLFormElement>) =>{
     e.preventDefault();
+    console.log("visible ",vis,"username ",username,"password ",password);
+    
     try {
       const res = vis? await signIn("credentials", {
         username: username,
-        email:email,
         password: password,
         redirect: false,
         
@@ -33,8 +32,8 @@ function Form() {
         email:email,
         password:password
       });
-      console.log("response ",res);
       const {data} : any = vis &&  await axios.get(`/api/auth/freelancer?username=${username}&password=${password}`)
+      
       if (vis) {
         router.push(`/user/${data.id}` ?? "http://localhost:3000");
       }

@@ -9,9 +9,7 @@ function Navbar() {
 
   const {data} =  useSession()  
   const links = [
-    { id: 1, links: `/`,name:"home" },
-    { id: 2, links: "/invite",name:"invite" },
-    { id: 3, links: `/user/${data?.user?.id}`,name:"chats" }
+    { id: 1, links: "/invite",name:"invite" },
   ];
   const [nav, setNav] = useState(false);
   

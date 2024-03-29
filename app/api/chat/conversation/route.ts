@@ -1,30 +1,15 @@
-import { PrismaClient } from '@prisma/client'
+import { create } from '@/lib/createConversation';
+import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server'
 
 import { parse } from "url";
-const prisma = new PrismaClient()
+
 
 export const POST =async (req: NextRequest) => {    
     const data = await req.json();
       try {
-            const newConversation = await prisma.conversation.create({
-                  data: {
-                    name:data.name
-                  }
-                });
-                await prisma.userConversationRelation.createMany({
-                  data: [
-                    {
-                      userId: data.user1Id,
-                      conversationId: newConversation.id
-                    },
-                    {
-                      userId: data.user2Id,
-                      conversationId: newConversation.id
-                    }
-                  ]
-                });
-                return NextResponse.json(newConversation)   
+            const newConversation = await create({prisma:prisma,name:data.name,userId1:data.userId1,userId2:data.userId2})
+            return NextResponse.json(newConversation)   
       } catch (error) {
             console.log(error);
             return NextResponse.json("Soemthing went wrong",{status:501})
