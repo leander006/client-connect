@@ -4,15 +4,18 @@ import React, { useState } from "react";
 import { MdCancel } from "react-icons/md";
 import { GiHamburgerMenu } from "react-icons/gi";
 
+
 function Navbar() {
+
+
   const links = [
-    { id: 1, links: "/",name:"home" },
+    { id: 1, links: `/`,name:"home" },
     { id: 2, links: "chat",name:"chat" }
   ];
   const [nav, setNav] = useState(false);
-
+  
   return (
-    <div className="flex justify-between items-center bg-black w-full z-50 fixed h-12">
+    <div className="flex justify-between items-center bg-background w-full shadow-xl z-50 fixed h-12 ">
       <div>
         <Link href="/" className="ml-2 text-primary text-2xl md:text-4xl font-serif">Freeconnect</Link>
       </div>
@@ -35,12 +38,12 @@ function Navbar() {
         className="flex text-black/60 md:hidden mr-2"
       >
         {!nav && (
-            <GiHamburgerMenu color="#0B8A54" size={24}/>
+            <GiHamburgerMenu color="#00A4FF" size={24}/>
         )}
       </div>
       {nav && (
         <div className="left-0 top-0 fixed z-50 w-full h-screen bg-black/70 ">
-          <ul className="flex flex-col p-2 top-0 left-0 w-[75%] sm:w-[60%] md:w-[45%] bg-[#ecf0f3] h-screen text-white">
+          <ul className="flex flex-col p-2 top-0 left-0 w-[75%] sm:w-[60%] md:w-[45%] bg-background h-screen text-white">
             <div className=" mt-4 w-full items-center">
               <div className="flex justify-between">
                 <h1 className="ml-2 text-primary text-2xl md:text-4xl font-serif">
@@ -51,7 +54,7 @@ function Navbar() {
                   className="flex cursor-pointer text-black/60 justify-center md:hidden"
                 >
                   {nav && (
-                    <MdCancel />
+                    <MdCancel color="#00A4FF" size={24}/>
                   )}
                 </div>
               </div>

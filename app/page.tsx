@@ -1,13 +1,23 @@
+import Chats from "@/components/Chats";
 import Form from "@/components/Form";
-import { auth } from "@/lib/auth";
-import { getServerSession } from "next-auth";
+
+import { getValue } from "@/store/hooks/useSession";
+
 
 
 
 export default async function Home() {
 
-const session = await getServerSession(auth)
-// console.log("main page session ",session);
+  const session = await getValue()
+  console.log("session values ",session);
+  
+if(session){
+  return (
+    <div>
+      <Chats/>
+    </div>
+  )
+}
 
   return (
     <div className="h-screen">

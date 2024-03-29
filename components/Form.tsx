@@ -48,7 +48,7 @@ function Form() {
   return (
       <div>
     <form onSubmit={submit}
-      className="flex justify-center text-black flex-col item-center mt-4"
+      className="flex justify-center text-secondary flex-col item-center mt-4"
     >
       <h1 className="text-black text-xl md:mb-3">{vis?"Login":"Sign up"}</h1>
       <label className="mb-2">Username</label>
