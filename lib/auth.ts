@@ -34,9 +34,11 @@ export const auth ={
       ],
       secret: process.env.NEXTAUTH_SECRET,
       callbacks:{
-        session:({session,token,user}: any ) =>{
-          session.user.id = token.sub
-          return session
+        session:({session,token}: any ) =>{
+          if (session?.user) {
+            session.user.id = token.sub;
+          }
+          return session;
         },
         async redirect({ url, baseUrl }:any) {
           

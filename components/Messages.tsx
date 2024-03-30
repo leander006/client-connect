@@ -1,36 +1,28 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Message from "./Message"
 import { IoSend } from "react-icons/io5";
+import axios from "axios";
+import { useSession } from "next-auth/react";
 
 function Messages() {
 
-      const [messages, setMessages] = useState([
-            {
-                  id:1,
-                  name:"demo1",
-                  image:"https://res.cloudinary.com/dj-sanghvi-college/image/upload/v1697996657/noProfile_jjyqlm.jpg",
-                  text:"hello",
-            },
-            {
-                  id:2,
-                  name:"demo2",
-                  image:"https://res.cloudinary.com/dj-sanghvi-college/image/upload/v1697996657/noProfile_jjyqlm.jpg",
-                  text:"hello"
-            },
-            {
-                  id:1,
-                  name:"demo1",
-                  image:"https://res.cloudinary.com/dj-sanghvi-college/image/upload/v1697996657/noProfile_jjyqlm.jpg",
-                  text:"hello"
-            }
-            ,            {
-                  id:2,
-                  name:"demo2",
-                  image:"https://res.cloudinary.com/dj-sanghvi-college/image/upload/v1697996657/noProfile_jjyqlm.jpg",
-                  text:"hello"
-            }
-      ])
+      const [messages, setMessages] = useState([])
+      const { data: session } = useSession();
+      console.log("data in sesison i messages",session?.user?.id);
+      
+      useEffect(() => {
+            const getMessages = async() =>{
+                  try {
+                        const res = await axios.get(`/api/chat/message?id=${session?.user?.id}`)
+                        setMessages(res.data);
+                  } catch (error) {
+                        console.log(error);
+                  }
+            }  
+            getMessages()
+      }, [])
+      
       const [chat, setChat] = useState({
             name:"leander",
             image:"https://res.cloudinary.com/dj-sanghvi-college/image/upload/v1697996657/noProfile_jjyqlm.jpg"
@@ -45,13 +37,7 @@ function Messages() {
             <div className="h-[80vh] md:h-[77vh] overflow-y-scroll">
             {messages.map((m) =>(
                         <Message key={m.id} name={m.name} id={m.id} image={m.image} text={m.text}/>
-                  ))}
-                              {messages.map((m) =>(
-                        <Message key={m.id} name={m.name} id={m.id} image={m.image} text={m.text}/>
-                  ))}
-                              {messages.map((m) =>(
-                        <Message key={m.id} name={m.name} id={m.id} image={m.image} text={m.text}/>
-                  ))}
+            ))}
             </div>
             <div className="w-full flex bg-white items-center cursor-pointer pr-2">
                   <input type="text" className="w-full p-3 focus:outline-none text-primary" placeholder="Enter message" />

@@ -23,7 +23,7 @@ export default async function User() {
   }
   return (
     <div>
-      <Chats/>
+      <Chats />
     </div>
 
   );

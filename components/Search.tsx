@@ -1,12 +1,42 @@
 "use client"
 
-import { useRouter } from "next/navigation"
+import axios from "axios";
+import { env } from "process";
+import { useEffect, useState } from "react";
+import Users from "./Users";
 
 function Search() {
-      const router = useRouter()
+
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [users, setUsers] = useState<[]>([])
+
+  const debouncedSearch = (value:string) => {
+    setTimeout(async () => {
+      try {
+        const { data } = await axios.get(`/api/auth/client?search=${value}`);
+        console.log(data);
+        
+        setUsers(data);
+      } catch (error) {
+        setUsers([]);
+      }
+    }, 800);
+  };
+
+  const handleChange = (e:any) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    debouncedSearch(value);
+  };
+
   return (
-    <div className="pt-3">
-            <h1 onClick={() => router.push("/invite")} className=" bg-secondary rounded-md p-3 cursor-pointer text-lg">Invite new clients</h1>
+    <div className="w-[40%] lg:w-1/3 rounded-md">
+            <input onChange={handleChange} value={searchTerm} className="p-1.5 w-full rounded-md text-secondary focus:outline-none" type="text" placeholder="Search user with username or email"/>
+            {users.length != 0 && <div className="fixed bg-primary mt-2 rounded-md p-2 w-[40%] lg:w-1/3">
+                    {users.map((u:any) =>(
+                      <Users setUsers={setUsers} key={u?.id} image={u?.image} id={u?.id} name={u?.name} />
+                    ))}
+            </div>}
     </div>
   )
 }

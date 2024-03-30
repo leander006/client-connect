@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { MdCancel } from "react-icons/md";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { signOut, useSession } from 'next-auth/react';
+import Search from "./Search";
 
 function Navbar() {
 
@@ -18,7 +19,7 @@ function Navbar() {
       <div>
         <Link href="/" className="ml-2 text-primary text-2xl md:text-4xl font-serif">Freeconnect</Link>
       </div>
-
+      <Search/>
       <ul className="hidden md:flex">
         {links.map(({ links, id,name }) => (
           <li

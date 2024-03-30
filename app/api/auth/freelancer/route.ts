@@ -23,7 +23,7 @@ export const GET = async(req: NextRequest) => {
                         email:true,
                         name:true,
                         image:true,
-                        password:true
+                        password:true,                        
                   }
               })
             

@@ -1,7 +1,9 @@
 import Chats from "@/components/Chats";
 import Form from "@/components/Form";
 import { auth } from "@/lib/auth";
+import axios from "axios";
 import { getServerSession } from "next-auth";
+import { env } from "process";
 
 
 
@@ -9,7 +11,12 @@ import { getServerSession } from "next-auth";
 export default async function Home() {
 
 const session = await getServerSession(auth)
-console.log("from home ",session);
+
+
+// const {data} = await axios.get(`${env.BASE_URL}/api/chat/conversation?userId=${session.user.id}`)
+
+
+// console.log("data ",data);
 
 
       if(!session){

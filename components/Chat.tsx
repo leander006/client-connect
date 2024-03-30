@@ -1,38 +1,18 @@
-"use client"
 
-import { useState } from "react"
+
 import Conversation from "./Conversation"
+import { getServerSession } from "next-auth";
+import { auth } from "@/lib/auth";
 
-function Chat() {
+async function Chat({p}:any) {
   
-      const [chats, setChats] = useState([
-            {
-                  id:1,
-                  image:"https://res.cloudinary.com/dj-sanghvi-college/image/upload/v1697996657/noProfile_jjyqlm.jpg",
-                  name:"client1"
-            },
-            {
-                  id:2,
-                  image:"https://res.cloudinary.com/dj-sanghvi-college/image/upload/v1697996657/noProfile_jjyqlm.jpg",
-                  name:"client2"
-            },
-            {
-                  id:3,
-                  image:"https://res.cloudinary.com/dj-sanghvi-college/image/upload/v1697996657/noProfile_jjyqlm.jpg",
-                  name:"client3"
-            }
-      ])
+const session = await getServerSession(auth)
+
 
   return (
     <div className="h-full space-y-2 overflow-y-scroll mx-2 ">
-            {chats.map((c) =>(
-                  <Conversation key={c.id} name={c.name} id={c.id} image={c.image}/>
-            ))}
-                        {chats.map((c) =>(
-                  <Conversation key={c.id} name={c.name} id={c.id} image={c.image}/>
-            ))}
-                        {chats.map((c) =>(
-                  <Conversation key={c.id} name={c.name} id={c.id} image={c.image}/>
+            {p?.map((c:any) =>(
+                  <Conversation key={c?.conversationId} name={c?.conversation.name} id={c?.conversation?.users[0]?.id == session?.user?.id? c?.conversation?.users[1]:c?.conversation?.users[0]}/>
             ))}
 
     </div>

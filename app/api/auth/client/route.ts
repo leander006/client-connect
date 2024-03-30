@@ -31,3 +31,34 @@ export const POST =async (req: NextRequest) => {
             return NextResponse.json("Soemthing went wrong",{status:501})
       }
 }
+
+export const GET =async (req: NextRequest) => {
+
+      const { query } = parse(req.url, true)
+        try {
+              const users =await prisma.user.findMany({
+                  where:{
+                        OR: [
+                              {
+                                name: {
+                                  contains: String(query.search)
+                                }
+                              },
+                              {
+                                email: {
+                                  contains: String(query.search)
+                                }
+                              }
+                        ]
+                  }
+              })
+              if(users.length == 0){
+                  return NextResponse.json("No user found",{status:401})
+              }
+            return NextResponse.json(users)  
+
+        } catch (error) {
+              console.log(error);
+              return NextResponse.json("Soemthing went wrong",{status:501})
+        }
+  }

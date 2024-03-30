@@ -26,13 +26,13 @@ export const POST =async (req: NextRequest) => {
 export const GET = async (req: NextRequest) => {
       const { query } = parse(req.url, true)
         try {
-            var message: any = {}
+            var message: any = {}            
             if(query.id != null){
-                  message = await prisma.message.findFirst({
+                  message = await prisma.message.findMany({
                         where:{
-                              id: Number(query.id)
+                              conversationId: Number(query.id)
                         },
-                        include: {
+                        include:{
                               sender:true
                         }
                     })

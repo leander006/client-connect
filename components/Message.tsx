@@ -10,7 +10,6 @@ interface dataType{
 
 function Message({id,name,image,text}:dataType) {
       const { data: session, status } = useSession();
-      console.log("session?.user?.id == id ",session?.user?.id === id );
       
   return (
     <div className={`capitalize text-white flex flex-col md:text-xl m-2 my-6 ${session?.user?.id == id ?"items-end":"items-start"}`}>

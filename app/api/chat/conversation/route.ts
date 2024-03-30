@@ -1,5 +1,7 @@
+import { auth } from '@/lib/auth';
 import { create } from '@/lib/createConversation';
 import { prisma } from '@/lib/prisma';
+import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server'
 
 import { parse } from "url";
@@ -18,26 +20,30 @@ export const POST =async (req: NextRequest) => {
 
 export const GET = async (req: NextRequest) => {
       const { query } = parse(req.url, true)
+      const session = await getServerSession(auth)
+      console.log("session from get conversation",session);
+      
         try {
             var conversation: any = {}
-            if(query.id != null){
-                  conversation = await prisma.conversation.findFirst({
-                        where:{
-                              id: Number(query.id)
+            if(query.userId != null){
+                  conversation = await prisma.userConversationRelation.findMany({
+                        where: {
+                          userId: Number(query.userId)
                         },
                         include: {
-                              users: {
-                                select: {
-                                  user: true,
-                                }
-                              },
-                              messages:{
-                                    include:{
-                                          sender:true
-                                    }
+                          conversation: {
+                              select:{
+                                    users:{
+                                          include:{
+                                                user:true
+                                          }
+                                    },
+                                    name:true
                               }
-                            }
-                    })
+                          },
+                          
+                        }
+                      });
                     if(conversation == null){
                         return NextResponse.json("conversation with above id does not exist",{status:402}) 
                     }
