@@ -1,12 +1,11 @@
 import { atom } from "recoil";
 
 interface userData{
-    id:number,
-    email:string,
-    Conversation:[]
+    name:string,
+    image:string
 }
 
 export const UserAtom = atom<userData>({
     key: "userAtom",
-    default: {id:-1,email:"",Conversation:[]},
+    default: {name:"",image:""},
 })

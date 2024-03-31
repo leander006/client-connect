@@ -7,6 +7,8 @@ import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import axios from "axios";
 import Input from "./Input";
+import toast from "react-hot-toast";
+import Spinner from "./Spinner";
 
 
 function Form() {
@@ -16,12 +18,14 @@ function Form() {
   const [password, setPassword] = useState("")
   const [vis, setVis] = useState(true)
   const router = useRouter();
+  const [loading, setLoading] = useState(false)
   
   const submit = async(e: React.FormEvent<HTMLFormElement>) =>{
     e.preventDefault();
     console.log("visible ",vis,"username ",username,"password ",password);
     
     try {
+      setLoading(true)
       const res = vis? await signIn("credentials", {
         username: username,
         password: password,
@@ -33,22 +37,29 @@ function Form() {
         password:password
       });
       const {data} : any = vis &&  await axios.get(`/api/auth/freelancer?username=${username}&password=${password}`)
-      
+      setLoading(false)
       if (vis) {
         router.push(`/user/${data.id}` ?? "http://localhost:3000");
       }
       else{
-        alert("Account created successfully")
+        toast.success("Account created successfully")
       }
-    } catch (error) {
-      alert("Something went wrong")
+    } catch (error:any) {
+      console.log(error?.response?.data);
+      toast.error(error?.response?.data?error?.response?.data:"Something went worng")
+      setLoading(false)
     }
 
   }
   return (
     <div>
-    <form onSubmit={submit}
-      className="flex justify-center text-sec flex-col item-center mt-4"
+      {loading ?
+      <div className="h-[45vh] flex justify-center w-full items-center">
+        <Spinner size={100}/>
+      </div>:
+      <div>
+          <form onSubmit={submit}
+      className="flex justify-center text-secondary flex-col item-center mt-4"
     >
       <h1 className="text-primary text-xl md:mb-3">{vis?"Login":"Sign up"}</h1>
 
@@ -66,7 +77,8 @@ function Form() {
           <div className="w-[50%]" onClick={() => setVis(false)}>
                 <Button name="Sign up" type="submit" />
           </div>     
-      </div>
+      </div></div>}
+
       </div>
 
   )

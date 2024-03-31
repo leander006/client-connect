@@ -9,10 +9,10 @@ interface dataType{
 }
 
 function Message({id,name,image,text}:dataType) {
-      const { data: session, status } = useSession();
-      
+
+      const { data: session} = useSession();
   return (
-    <div className={`capitalize text-white flex flex-col md:text-xl m-2 my-6 ${session?.user?.id != id ?"items-end":"items-start"}`}>
+    <div className={`capitalize text-white flex flex-col md:text-xl m-2 my-6 ${session?.user?.id == id ?"items-end":"items-start"}`}>
             <div className="flex items-center space-x-2">
                   <img className="w-6 h-6 rounded-full" src={image} alt={name} />
                   <h1>{name}</h1>

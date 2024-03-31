@@ -9,6 +9,7 @@ import Search from "./Search";
 function Navbar() {
 
   const {data} =  useSession()  
+  
   const links = [
     { id: 1, links: "/invite",name:"invite" },
   ];
@@ -19,7 +20,9 @@ function Navbar() {
       <div>
         <Link href="/" className="ml-2 text-primary text-2xl md:text-4xl font-serif">Freeconnect</Link>
       </div>
-      <Search/>
+      <div className="hidden md:flex w-[40%]">
+            <Search/>
+      </div>
       <ul className="hidden md:flex">
         {links.map(({ links, id,name }) => (
           <li

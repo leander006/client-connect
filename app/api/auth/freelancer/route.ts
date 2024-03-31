@@ -28,7 +28,7 @@ export const GET = async(req: NextRequest) => {
               })
             
             if(!user){
-                  return NextResponse.json(null)   
+                  return NextResponse.json("User doesn't exist",{status:401})   
             }  
             const validate = await bcrypt.compare(password,user?.password||"")
             if(!validate){
@@ -37,7 +37,7 @@ export const GET = async(req: NextRequest) => {
             return NextResponse.json(user)   
         } catch (error) {
               console.log(error);
-              return NextResponse.json("Soemthing went wrong",{ status: 501 })
+              return NextResponse.json("Something went wrong",{ status: 501 })
         }
 }
 
@@ -48,12 +48,19 @@ export const POST =async (req: NextRequest) => {
       try {
             const user =  await prisma.user.findFirst({
                   where:{
-                        name:data.username
+                        OR:[
+                              {
+                                    email:data.email
+                              },
+                              {
+                                    name:data.name
+                              }
+                        ]
                   }
             })
 
             if(user){
-                  return NextResponse.json(user)   
+                  return NextResponse.json("User with above email or name exists",{status:402})   
             }
             const newUser = await prisma.user.create({
                   data:{
@@ -62,9 +69,9 @@ export const POST =async (req: NextRequest) => {
                         password: await bcrypt.hash(data.password, Number(env?.SALT) || 0 ) 
                   }
                 })
-                return NextResponse.json(newUser)   
+                return NextResponse.json("User created please login")   
       } catch (error) {
             console.log(error);
-            return NextResponse.json("Soemthing went wrong",{ status: 501 })
+            return NextResponse.json("Something went wrong",{ status: 501 })
       }
 }

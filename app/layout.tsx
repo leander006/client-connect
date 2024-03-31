@@ -5,6 +5,7 @@ import { Providers } from "@/store/providers";
 import { getServerSession } from "next-auth";
 import { auth } from "@/lib/auth";
 import Navbar from "@/components/Navbar";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,15 +20,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
 
-  // const session = await getServerSession(auth)
-
   return (
     <html lang="en">
       <Providers>
         <body className={inter.className}>
+        <Toaster position="top-center" reverseOrder={false} />
           <Navbar/>
           {children}
         </body>
+
       </Providers>
     </html>
   );

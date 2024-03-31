@@ -7,8 +7,6 @@ import { auth } from "@/lib/auth";
 async function Chat({p}:any) {
   
 const session = await getServerSession(auth)
-console.log("p ",p);
-
 
 
   return (

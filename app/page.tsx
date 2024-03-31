@@ -1,5 +1,6 @@
 import Chats from "@/components/Chats";
 import Form from "@/components/Form";
+import Search from "@/components/Search";
 import { auth } from "@/lib/auth";
 import axios from "axios";
 import { getServerSession } from "next-auth";

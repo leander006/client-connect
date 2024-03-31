@@ -10,11 +10,11 @@ export const  create = async({prisma,userId1,userId2}:inputType) =>{
           await prisma.userConversationRelation.createMany({
             data: [
               {
-                userId: userId1,
+                userId: Number(userId1),
                 conversationId: newConversation.id
               },
               {
-                userId:userId2,
+                userId:Number(userId2),
                 conversationId: newConversation.id
               }
             ]

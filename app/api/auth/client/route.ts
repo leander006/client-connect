@@ -16,7 +16,21 @@ export const POST =async (req: NextRequest) => {
     var pass= randomUUID()
     var username = randomUUID()
       try {
-            const user =await prisma.user.create({
+            
+            if(!data.email){
+                  return NextResponse.json(`Please fill email field`,{status:401}) 
+            }
+
+            let user = await prisma.user.findFirst({
+                  where:{
+                        email:data.email
+                  }
+            })
+
+            if(user){
+                  return NextResponse.json(`User with above email exists`,{status:401}) 
+            }
+            user =await prisma.user.create({
                   data:{
                         email:data.email,
                         name:username,
@@ -28,7 +42,7 @@ export const POST =async (req: NextRequest) => {
                 return NextResponse.json(`Email send to ${data.email}`)   
       } catch (error) {
             console.log(error);
-            return NextResponse.json("Soemthing went wrong",{status:501})
+            return NextResponse.json("Something went wrong",{status:501})
       }
 }
 
@@ -60,5 +74,58 @@ export const GET =async (req: NextRequest) => {
         } catch (error) {
               console.log(error);
               return NextResponse.json("Soemthing went wrong",{status:501})
+        }
+  }
+
+
+  export const PUT =async (req: NextRequest) => {
+      const data = await req.json();
+      const { query } = parse(req.url, true)
+
+        try {
+              
+              let user = await prisma.user.findFirst({
+                  where:{
+                        OR:[
+                              {
+                                    email:data.email
+                              },
+                              {
+                                    name:data.name
+                              }
+                        ]
+                  }
+              })
+              
+              if(user){
+                  return NextResponse.json(`User with above name or email exists`,{status:401}) 
+              }
+
+             user = await prisma.user.findFirst({
+                  where:{
+                        id:Number(query.id)
+                  }
+              })
+
+              const name = data.name ? data.name: user?.name
+              const email = data.email? data.email:user?.email
+              const password = data.password ? await bcrypt.hash(data.password , Number(env?.SALT) || 0 ) : user?.password
+              
+              user = await prisma.user.update({
+                  data:{
+                        email:email,
+                        name:name,
+                        password:password
+                  },
+                  where:{
+                        id:Number(query.id)
+                  }
+              })
+
+            return NextResponse.json(`User updated with new credentials`) 
+              
+        } catch (error) {
+              console.log(error);
+              return NextResponse.json("Something went wrong",{status:501})
         }
   }

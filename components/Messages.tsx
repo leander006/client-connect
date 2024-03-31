@@ -1,53 +1,142 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Message from "./Message"
 import { IoSend } from "react-icons/io5";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
+import { useRecoilState} from "recoil";
+import { UserAtom } from "@/store/atoms/user";
+import { io } from "socket.io-client";
+import Spinner from "./Spinner";
+import ChatSkeleton from "./Skeleton/ChatSkeleton";
+import MessageSkeleton from "./Skeleton/MessageSkeleton";
+
+let socket:any
 
 function Messages() {
 
-      const [messages, setMessages] = useState([])
-      const { data: session } = useSession();
+      const [messages, setMessages] = useState<any[]>([])
+      const [message, setMessage] = useState<string>("")
+      const { data: session, status } = useSession()
       const {conversationId} = useParams();
+      const [loading, setLoading] = useState(false)
 
-      console.log("conversationId ",conversationId);
+      const [data,setData] = useRecoilState(UserAtom)
       
-      
+      const port = process.env.SOCKET_URL
+
+      const messagesEndRef = useRef<HTMLDivElement>(null);
+      const Endpoint = `${port}/`;
+
       useEffect(() => {
-            const getMessages = async() =>{
-                  try {
-                        const res = await axios.get(`/api/chat/message?id=${conversationId}`)
-                        console.log(res.data);
-                        
-                        setMessages(res.data);
-                  } catch (error) {
-                        console.log(error);
-                  }
-            }  
+            socket = io(Endpoint);
+            socket?.emit('setup', session?.user);
+            socket?.on("connected",(name:any) =>{console.log(`${name} connected`);
+            })
+            socket?.emit('join room', conversationId);
+    
+            return () => {
+                socket?.disconnect();
+                socket?.off("connected",(name:any) =>{console.log(`${name} connected`);
+            })
+            };
+        }, [session]);
+
+        useEffect(() => {
+            socket?.on("get_Message", (messageReceived:any) => {
+                setMessages([...messages,messageReceived])
+            });
+
+            return () => {
+                  socket?.off("get_Message", (messageReceived:any) => {
+                        setMessages([...messages,messageReceived])
+                  });
+            }
+        });
+        
+      const getMessages = async() =>{
+            try {
+                  setLoading(true)
+                  const res = await axios.get(`/api/chat/message?id=${conversationId}`)
+                  setData({name:localStorage.getItem("name")||"",image:localStorage.getItem("image")||""})
+                  setMessages(res.data);
+                  setLoading(false)
+            } catch (error) {
+                  console.log(error);
+                  setLoading(false)
+            }
+      }  
+      
+
+      useEffect(() => {
             getMessages()
       }, [])
-      
-      const [chat, setChat] = useState({
-            name:"leander",
-            image:"https://res.cloudinary.com/dj-sanghvi-college/image/upload/v1697996657/noProfile_jjyqlm.jpg"
-      })
 
+      const sendMessage = async() =>{
+            try {
+                  const {data} = await axios.post(`/api/chat/message?userId=${session?.user?.id}&id=${conversationId}`,{body:message})
+                  socket?.emit("send_message",{messageRecieved:data,room:conversationId})
+                  setMessages([...messages,data])
+                  setMessage("")
+            } catch (error) {
+                 console.log(error);
+            }
+      }
+
+      const scrollToBottom = () => {
+            if (messagesEndRef.current) {
+                messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+            }
+        };
+    
+        useEffect(() => {
+            scrollToBottom();
+        }, [messages]);
+
+
+      if(status == "loading"){
+            return (
+              <>
+                <div className="flex h-full w-full justify-center items-center"><Spinner size={120}/></div>
+              </>      
+            ); 
+
+          }
   return (
-      <div className=" bg-secondary md:mx-24 md:my-2">
-            <div className="bg-primary flex p-3 space-x-2 items-center">
-                  <img className=" rounded-full h-6 w-6" src={chat.image} alt={chat.name}/>
-                  <h1 className="md:text-xl capitalize">{chat.name}</h1>
-            </div>
-            <div className="h-[80vh] md:h-[77vh] overflow-y-scroll">
-            {messages.map((m:any) =>(
-                  <Message key={m?.id} name={m?.sender?.name} id={m.id} image={m?.sender.image} text={m.body}/>
-            ))}
+      <div className=" bg-secondary md:mx-36 md:my-2">
+            {data ?<div className="bg-primary flex p-3 space-x-2 items-center">
+                  {data && <img className=" rounded-full h-6 w-6" src={data.image} alt={data.name}/>}
+                  <h1 className="md:text-xl capitalize">{data.name}</h1>
+            </div>:
+            <ChatSkeleton/>
+            }
+
+            <div className="h-[80vh] md:h-[77vh] overflow-y-scroll px-6">
+            {!loading ?messages.map((m:any) =>(
+                  <Message key={m?.id} name={m?.sender?.name} id={m?.sender?.id} image={m?.sender?.image} text={m?.body}/>
+            )):<div >
+                  <div className="flex flex-col items-end">
+                        <MessageSkeleton/>
+                  </div>
+                  <div className="flex flex-col items-start">
+                        <MessageSkeleton/>
+                  </div>
+                  <div className="flex flex-col items-end">
+                        <MessageSkeleton/>
+                  </div>
+                  <div className="flex flex-col items-start">
+                        <MessageSkeleton/>
+                  </div>
+                  <div className="flex flex-col items-end">
+                        <MessageSkeleton/>
+                  </div>
+            </div>}
+            <div ref={messagesEndRef} />
             </div>
             <div className="w-full flex bg-white items-center cursor-pointer pr-2">
-                  <input type="text" className="w-full p-3 focus:outline-none text-primary" placeholder="Enter message" />
-                  <div>
+                  <input value={message} onChange={(e:any) => setMessage(e.target.value)} type="text" className="w-full p-3 focus:outline-none text-primary" placeholder="Enter message" />
+                  <div onClick={sendMessage}>
                         <IoSend color="#00A4FF" size={24}/>
                   </div>
             </div>

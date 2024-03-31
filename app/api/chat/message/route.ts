@@ -11,15 +11,27 @@ export const POST =async (req: NextRequest) => {
             const message = await prisma.message.create({
                   data: {
                     body:data.body,
-                    senderId: Number(query.userId ),
+                    senderId: Number(query.userId),
                     conversationId: Number(query.id)
+                  },
+                  include:{
+                        sender:true,
+                        conversation:{
+                              include:{
+                                    users:{
+                                          include:{
+                                                user:true
+                                          }
+                                    }
+                              }
+                        }
                   }
                 });
 
                 return NextResponse.json(message)   
       } catch (error) {
             console.log(error);
-            return NextResponse.json("Soemthing went wrong",{status:501})
+            return NextResponse.json("Something went wrong",{status:501})
       }
 }
 
@@ -35,7 +47,16 @@ export const GET = async (req: NextRequest) => {
                               conversationId: Number(query.id)
                         },
                         include:{
-                              sender:true
+                              sender:true,
+                              conversation:{
+                                    include:{
+                                          users:{
+                                                include:{
+                                                      user:true
+                                                }
+                                          }
+                                    }
+                              }
                         }
                     })
                     if(message == null){
@@ -52,7 +73,7 @@ export const GET = async (req: NextRequest) => {
             return NextResponse.json(message)   
         } catch (error) {
               console.log(error);
-              return NextResponse.json("Soemthing went wrong",{status:501})
+              return NextResponse.json("Something went wrong",{status:501})
         }
   }
  
