@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth';
 import { create } from '@/lib/createConversation';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
+import { getProviders, getSession } from 'next-auth/react';
 import { NextRequest, NextResponse } from 'next/server'
 
 import { parse } from "url";
@@ -10,7 +11,7 @@ import { parse } from "url";
 export const POST =async (req: NextRequest) => {    
     const data = await req.json();
       try {
-            const newConversation = await create({prisma:prisma,name:data.name,userId1:data.userId1,userId2:data.userId2})
+            const newConversation = await create({prisma:prisma,userId1:data.userId1,userId2:data.userId2})
             return NextResponse.json(newConversation)   
       } catch (error) {
             console.log(error);
@@ -21,8 +22,10 @@ export const POST =async (req: NextRequest) => {
 export const GET = async (req: NextRequest) => {
       const { query } = parse(req.url, true)
       const session = await getServerSession(auth)
+      // const session = await getSession();
+      // console.log("Providers", providers)
       console.log("session from get conversation",session);
-      
+
         try {
             var conversation: any = {}
             if(query.userId != null){
@@ -38,7 +41,6 @@ export const GET = async (req: NextRequest) => {
                                                 user:true
                                           }
                                     },
-                                    name:true
                               }
                           },
                           
@@ -62,7 +64,7 @@ export const GET = async (req: NextRequest) => {
             return NextResponse.json(conversation)   
         } catch (error) {
               console.log(error);
-              return NextResponse.json("Soemthing went wrong",{status:501})
+              return NextResponse.json("Something went wrong",{status:501})
         }
   }
  

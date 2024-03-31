@@ -21,10 +21,8 @@ model User {
 }
 
 model Conversation {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  name      String?
-
+  id          Int       @id @default(autoincrement())
+  createdAt   DateTime  @default(now())
   messagesIds String[]
   messages    Message[]
 

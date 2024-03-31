@@ -36,7 +36,7 @@ export const auth ={
       callbacks:{
         session:({session,token}: any ) =>{
           if (session?.user) {
-            session.user.id = token.sub;
+            session.user.id = token.sub
           }
           return session;
         },

@@ -4,17 +4,23 @@ import Message from "./Message"
 import { IoSend } from "react-icons/io5";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { useParams } from "next/navigation";
 
 function Messages() {
 
       const [messages, setMessages] = useState([])
       const { data: session } = useSession();
-      console.log("data in sesison i messages",session?.user?.id);
+      const {conversationId} = useParams();
+
+      console.log("conversationId ",conversationId);
+      
       
       useEffect(() => {
             const getMessages = async() =>{
                   try {
-                        const res = await axios.get(`/api/chat/message?id=${session?.user?.id}`)
+                        const res = await axios.get(`/api/chat/message?id=${conversationId}`)
+                        console.log(res.data);
+                        
                         setMessages(res.data);
                   } catch (error) {
                         console.log(error);
@@ -35,8 +41,8 @@ function Messages() {
                   <h1 className="md:text-xl capitalize">{chat.name}</h1>
             </div>
             <div className="h-[80vh] md:h-[77vh] overflow-y-scroll">
-            {messages.map((m) =>(
-                        <Message key={m.id} name={m.name} id={m.id} image={m.image} text={m.text}/>
+            {messages.map((m:any) =>(
+                  <Message key={m?.id} name={m?.sender?.name} id={m.id} image={m?.sender.image} text={m.body}/>
             ))}
             </div>
             <div className="w-full flex bg-white items-center cursor-pointer pr-2">

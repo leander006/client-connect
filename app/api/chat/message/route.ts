@@ -25,6 +25,8 @@ export const POST =async (req: NextRequest) => {
 
 export const GET = async (req: NextRequest) => {
       const { query } = parse(req.url, true)
+      console.log("query from id ",query.id);
+      
         try {
             var message: any = {}            
             if(query.id != null){

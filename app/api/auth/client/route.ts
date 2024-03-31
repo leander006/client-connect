@@ -23,7 +23,7 @@ export const POST =async (req: NextRequest) => {
                         password: await bcrypt.hash(pass, Number(env?.SALT) || 0 ) 
                   }
                 })
-                create({prisma:prisma,name:data.name,userId1:user.id,userId2:data.userId})
+                create({prisma:prisma,userId1:user.id,userId2:data.userId})
                 await sendMail({email:data.email,subject:`${query.name} from freeconnect `,para:`${query.name} wants you to join freeconnect to discuss about your project <br></br> Please use ${username} as username and ${pass} as your password and change it to be projected from hackers`,title:`${query.name} from freeconnect `,link:`${env.NEXTAUTH_URL}`})
                 return NextResponse.json(`Email send to ${data.email}`)   
       } catch (error) {
