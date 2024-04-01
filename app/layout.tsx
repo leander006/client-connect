@@ -22,14 +22,13 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <Providers>
         <body className={inter.className}>
-        <Toaster position="top-center" reverseOrder={false} />
-          <Navbar/>
-          {children}
+        <Providers>
+            <Toaster position="top-center" reverseOrder={false} />
+            {children}
+          </Providers>
         </body>
 
-      </Providers>
     </html>
   );
 }

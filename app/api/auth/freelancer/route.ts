@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from "bcrypt"
 import { env } from 'process'
 import { parse } from "url";
-import { prisma } from '@/lib/prisma';
+import prisma from '@/lib/prisma';
 
 
 export const GET = async(req: NextRequest) => {

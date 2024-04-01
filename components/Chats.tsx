@@ -7,11 +7,12 @@ import { auth } from '@/lib/auth';
 import SendInvite from './SendInvite';
 import Search from './Search';
 
+
 async function Chats() {
 
 const session = await getServerSession(auth)
 
-const {data} = await axios.get(`${env.BASE_URL}/api/chat/conversation?userId=${session.user.id}`)
+const {data} = await axios.get(`${env.BASE_URL}/api/chat/conversation?userId=${session?.user.id}`)
 
 
   return (

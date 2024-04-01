@@ -1,8 +1,3 @@
-import React from 'react'
-import { FaGoogle } from "react-icons/fa";
-import { FaGithub } from "react-icons/fa";
-import { RiLoginCircleLine } from "react-icons/ri";
-
 interface input{
       name:String,
       type: "button" | "submit" | "reset",

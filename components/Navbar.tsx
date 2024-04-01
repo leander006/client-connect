@@ -8,10 +8,12 @@ import Search from "./Search";
 
 function Navbar() {
 
-  const {data} =  useSession()  
+  const {data:session} =  useSession()  
   
   const links = [
-    { id: 1, links: "/invite",name:"invite" },
+    {    id: 1, links: "/home",name:"home"},
+    {    id: 2, links: "/invite",name:"invite" },
+    {    id: 3, links: "/profile",name:"profile" },
   ];
   const [nav, setNav] = useState(false);
   
@@ -20,14 +22,14 @@ function Navbar() {
       <div>
         <Link href="/" className="ml-2 text-primary text-2xl md:text-4xl font-serif">Freeconnect</Link>
       </div>
-      <div className="hidden md:flex w-[40%]">
+      <div className="hidden md:flex w-[40%] md:w-[30%] lg:w-[40%]">
             <Search/>
       </div>
       <ul className="hidden md:flex">
         {links.map(({ links, id,name }) => (
           <li
             key={id}
-              className="text-white mx-4 font-medium capitalize cursor-pointer hover:scale-125 duration-300"
+              className="text-white mx-2 font-medium capitalize cursor-pointer hover:scale-125 duration-300"
           >
             <Link href={links}>
               {name}
@@ -35,7 +37,7 @@ function Navbar() {
           </li>
         ))}
 
-        {data && <div onClick={() => signOut()} className="mx-4 cursor-pointer hover:scale-125 duration-300">Logout</div>}
+        {session && <div onClick={() => signOut()} className="mx-2 cursor-pointer hover:scale-125 duration-300">Logout</div>}
       </ul>
 
       <div
@@ -79,7 +81,7 @@ function Navbar() {
                 </li>
                 
               ))}
-            {data && <div onClick={() => signOut()} className="py-6 cursor-pointer hover:scale-125 duration-300">Logout</div>}
+            {session && <div onClick={() => signOut()} className="py-6 cursor-pointer hover:scale-125 duration-300">Logout</div>}
             </div>
           </ul>
         </div>

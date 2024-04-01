@@ -1,6 +1,6 @@
 import { auth } from '@/lib/auth';
 import { create } from '@/lib/createConversation';
-import { prisma } from '@/lib/prisma';
+import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -9,6 +9,9 @@ import { parse } from "url";
 
 export const POST =async (req: NextRequest) => {    
     const data = await req.json();
+    console.log(req.cookies);
+    
+    
       try {
             const newConversation = await create({prisma:prisma,userId1:data.userId1,userId2:data.userId2})
             return NextResponse.json(newConversation)   

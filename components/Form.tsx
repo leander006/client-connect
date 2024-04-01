@@ -22,7 +22,7 @@ function Form() {
   
   const submit = async(e: React.FormEvent<HTMLFormElement>) =>{
     e.preventDefault();
-    console.log("visible ",vis,"username ",username,"password ",password);
+
     
     try {
       setLoading(true)
@@ -37,13 +37,13 @@ function Form() {
         password:password
       });
       const {data} : any = vis &&  await axios.get(`/api/auth/freelancer?username=${username}&password=${password}`)
-      setLoading(false)
       if (vis) {
-        router.push(`/user/${data.id}` ?? "http://localhost:3000");
+        router.push(`/user/${data.id}`);
       }
       else{
         toast.success("Account created successfully")
       }
+      setLoading(false)
     } catch (error:any) {
       console.log(error?.response?.data);
       toast.error(error?.response?.data?error?.response?.data:"Something went worng")
@@ -70,13 +70,13 @@ function Form() {
       {vis?<Button name="Login"  type="submit" /> :
       <Button name="Sign up"  type="submit" />}
     </form>
-      <div className="flex space-x-1">
-          <div className="w-[50%]" onClick={() => setVis(true)}>
+      <div className="flex space-x-1 ">
+          {!vis?<div className="w-full" onClick={() => setVis(true)}>
                 <Button name="Login"  type="submit" />
-          </div>
-          <div className="w-[50%]" onClick={() => setVis(false)}>
+          </div>:
+          <div className="w-full" onClick={() => setVis(false)}>
                 <Button name="Sign up" type="submit" />
-          </div>     
+          </div>  }   
       </div></div>}
 
       </div>

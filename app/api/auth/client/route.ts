@@ -6,7 +6,8 @@ import { parse } from "url";
 import { randomUUID } from 'crypto'
 import { sendMail } from '@/lib/sendEmail';
 import { create } from '@/lib/createConversation';
-import { prisma } from '@/lib/prisma';
+import prisma from '@/lib/prisma';
+
 
 
 
@@ -83,7 +84,9 @@ export const GET =async (req: NextRequest) => {
       const { query } = parse(req.url, true)
 
         try {
-              
+            //   if(!data.password || !data.name){
+            //       return NextResponse.json(`Enter all input field`,{status:402}) 
+            //   }
               let user = await prisma.user.findFirst({
                   where:{
                         OR:[
@@ -96,7 +99,7 @@ export const GET =async (req: NextRequest) => {
                         ]
                   }
               })
-              
+
               if(user){
                   return NextResponse.json(`User with above name or email exists`,{status:401}) 
               }
@@ -106,14 +109,13 @@ export const GET =async (req: NextRequest) => {
                         id:Number(query.id)
                   }
               })
-
-              const name = data.name ? data.name: user?.name
-              const email = data.email? data.email:user?.email
-              const password = data.password ? await bcrypt.hash(data.password , Number(env?.SALT) || 0 ) : user?.password
+              console.log("data.name ",data.name == "");
+              
+              const name = data.name != "" ? data.name: user?.name
+              const password = data.password  != "" ? await bcrypt.hash(data.password , Number(env?.SALT) || 0 ) : user?.password
               
               user = await prisma.user.update({
                   data:{
-                        email:email,
                         name:name,
                         password:password
                   },

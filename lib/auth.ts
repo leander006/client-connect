@@ -21,10 +21,11 @@ export const auth ={
           async authorize(credentials, req) {
             if (!credentials?.username || !credentials?.password) return null;
             try {
+              console.log(env.BASE_URL);
               const {data} = await axios.get(`${env.BASE_URL}/api/auth/freelancer?username=${credentials?.username}&password=${credentials?.password}`)  
               console.log(data);
               
-              return {name:data.name,email:data.email,id:data.id,image:data.image};
+              return {name:data.name,email:data.email,id:data.id,image:data.image,password:data.password};
             } catch (e) {
               console.error(e);
               return null;

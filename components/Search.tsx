@@ -31,7 +31,7 @@ function Search() {
 
   return (
     <div className="w-full rounded-md ">
-            <input onChange={handleChange} value={searchTerm} className="p-1.5 w-full rounded-md text-secondary focus:outline-none" type="text" placeholder="Search user with username or email"/>
+            <input onChange={handleChange} value={searchTerm} className="p-1.5 w-full  rounded-md text-secondary focus:outline-none" type="text" placeholder="Search by username or email"/>
             {users.length != 0 && <div className="fixed bg-primary mt-2 rounded-md p-2 w-[96%] md:w-[40%] ">
                     {users.map((u:any) =>(
                       <Users setUsers={setUsers} key={u?.id} image={u?.image} id={u?.id} name={u?.name} />

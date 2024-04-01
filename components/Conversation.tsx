@@ -3,9 +3,8 @@
 import { UserAtom } from "@/store/atoms/user";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { useRecoilState } from "recoil";
-import { io } from "socket.io-client";
+
 
 
 interface body{
