@@ -70,6 +70,10 @@ export const GET = async (req: NextRequest) => {
                         }
                   })
             }
+            const filteredArray:[]  = message[0]?.conversation?.users.filter((u:any) => u.userId === query.userId)
+            if(filteredArray?.length > 0){
+                  return NextResponse.json("Not authenticated",{status:402})   
+            }
             return NextResponse.json(message)   
         } catch (error) {
               console.log(error);

@@ -22,14 +22,14 @@ function Navbar() {
       <div>
         <Link href="/home" className="ml-2 text-primary text-2xl md:text-4xl font-serif">Freeconnect</Link>
       </div>
-      <div className="hidden md:flex w-[40%] md:w-[30%] lg:w-[40%]">
+      {/* <div className="hidden md:flex w-[40%] md:w-[30%] lg:w-[40%]">
             <Search/>
-      </div>
+      </div> */}
       <ul className="hidden md:flex">
         {links.map(({ links, id,name }) => (
           <li
             key={id}
-              className="text-white mx-2 font-medium capitalize cursor-pointer hover:scale-125 duration-300"
+              className="text-white mx-4 font-medium capitalize cursor-pointer hover:scale-125 duration-300"
           >
             <Link href={links}>
               {name}
@@ -37,7 +37,7 @@ function Navbar() {
           </li>
         ))}
 
-        {session && <div onClick={() => signOut({ callbackUrl: '/' })} className="mx-2 cursor-pointer hover:scale-125 duration-300">Logout</div>}
+        {session && <div onClick={() => signOut({ callbackUrl: '/' })} className="mx-4 cursor-pointer hover:scale-125 duration-300">Logout</div>}
       </ul>
 
       <div

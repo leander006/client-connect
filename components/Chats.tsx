@@ -17,9 +17,9 @@ const {data} = await axios.get(`${env.BASE_URL}/api/chat/conversation?userId=${s
 
   return (
       <div className="pt-16 md:px-12 h-full">
-        <div className='flex mx-2 md:hidden'>
+        {/* <div className='flex mx-2 md:hidden'>
             <Search/>
-        </div>
+        </div> */}
       <div className="h-[70%] pt-2">
           {data.length != 0 ? <Chat p={data}/>:<div className='flex justify-center h-full md:text-xl items-center'>No conversations</div>}
 

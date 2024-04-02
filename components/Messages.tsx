@@ -12,6 +12,7 @@ import Spinner from "./Spinner";
 import ChatSkeleton from "./Skeleton/ChatSkeleton";
 import MessageSkeleton from "./Skeleton/MessageSkeleton";
 import { FaArrowLeft } from "react-icons/fa";
+import Image from "next/image";
 
 let socket:any
 
@@ -111,7 +112,7 @@ function Messages() {
                   <div onClick={() =>{router.push("/home")}} className=" cursor-pointer">
                         <FaArrowLeft color="#0042A3" size={24} />
                   </div>
-                  {data && <img className=" rounded-full h-6 w-6" src={data.image} alt={data.name}/>}
+                  {data && <Image width={12} height={12} className=" rounded-full h-6 w-6" src={data.image} alt={data.name}/>}
                   <h1 className="text-sm md:text-lg capitalize">{data.name}</h1>
             </div>:
             <ChatSkeleton/>

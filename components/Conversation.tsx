@@ -2,6 +2,7 @@
 
 import { UserAtom } from "@/store/atoms/user";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useRecoilState } from "recoil";
 
@@ -28,7 +29,7 @@ function Conversation({id,users}:body) {
     
   return (
     <div onClick={redirect} className="bg-secondary text-white flex p-2 rounded-md items-center space-x-3 cursor-pointer">
-            <img src={users?.user?.image} alt="logoicon" className="w-8 h-8 rounded-full"/>
+            <Image src={users?.user?.image} width={12} height={12} alt="logoicon" className="w-8 h-8 rounded-full"/>
             <h1 className="capitalize">{users?.user?.name}</h1>
     </div>
   )

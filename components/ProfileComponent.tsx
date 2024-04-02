@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import HandleButton from "./HandleButton";
 import axios from "axios";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 interface userType{
       name:string,
@@ -82,7 +83,7 @@ function ProfileComponent({name,id,image}:userType) {
            {!vis && <div className="text-primary w-full space-x-3 ">
             <div className="flex flex-col items-center w-full justify-center ">
                   <h1 className="md:text-xl my-3">User Profile</h1>
-                  <img className="w-24 h-24 rounded-full" src={image} alt={name} />
+                  <Image width={12} height={12} className="w-24 h-24 rounded-full" src={image} alt={name} />
                   <h1 className="text-sm md:text-lg capitalize my-6 text-center">{name}</h1>
                   <div className="flex space-x-1 w-full">
                   {id !=  session?.user?.id ? <div className="w-full">
