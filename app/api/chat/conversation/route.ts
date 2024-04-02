@@ -4,16 +4,34 @@ import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server'
 
+
 import { parse } from "url";
 
 
 export const POST =async (req: NextRequest) => {    
     const data = await req.json();
-    console.log(req.cookies);
+    console.log(req.cookies.get("data"));
     
     
       try {
-            const newConversation = await create({prisma:prisma,userId1:data.userId1,userId2:data.userId2})
+            var newConversation: any = {}
+            newConversation = await prisma.userConversationRelation.findFirst({
+                  where: {
+                    userId: Number(data.userId2)
+                  },
+                  include: {
+                    conversation: true,
+                    user:true
+                  }
+            });
+            if(newConversation){
+                  console.log("already exists ");
+                  
+                  return NextResponse.json({response:newConversation,message:"Already exists"})   
+            }
+            console.log("new convo");
+            
+            newConversation = await create({prisma:prisma,userId1:data.userId1,userId2:data.userId2})
             return NextResponse.json(newConversation)   
       } catch (error) {
             console.log(error);
@@ -24,8 +42,10 @@ export const POST =async (req: NextRequest) => {
 export const GET = async (req: NextRequest) => {
       const { query } = parse(req.url, true)
       const session = await getServerSession(auth)
+      console.log("Providers", session)
 
-      console.log("session from get conversation",session);
+      console.log(req.cookies.getAll());
+      
 
         try {
             var conversation: any = {}

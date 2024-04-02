@@ -22,27 +22,16 @@ function Form() {
   
   const submit = async(e: React.FormEvent<HTMLFormElement>) =>{
     e.preventDefault();
-
-    
     try {
       setLoading(true)
-      const res = vis? await signIn("credentials", {
-        username: username,
-        password: password,
-        redirect: false,
-        
-      }): await axios.post(`/api/auth/freelancer`,{
+
+      await axios.post(`/api/auth/freelancer`,{
         username:username,
         email:email,
         password:password
       });
-      const {data} : any = vis &&  await axios.get(`/api/auth/freelancer?username=${username}&password=${password}`)
-      if (vis) {
-        router.push(`/user/${data.id}`);
-      }
-      else{
-        toast.success("Account created successfully")
-      }
+
+      toast.success("Account created successfully")
       setLoading(false)
     } catch (error:any) {
       console.log(error?.response?.data);
@@ -51,6 +40,26 @@ function Form() {
     }
 
   }
+
+  const login = async (e: React.FormEvent<HTMLFormElement>) =>{
+        e.preventDefault();
+        try {
+          setLoading(true)
+          await signIn("credentials", {
+            username: username,
+            password: password,
+            redirect: false,
+
+          })
+          const {data} : any = await axios.get(`/api/auth/freelancer?username=${username}&password=${password}`)
+          router.push(`/user/${data.id}`);
+          setLoading(false)
+        } catch (error:any) {
+          console.log(error?.response?.data);
+          toast.error(error?.response?.data?error?.response?.data:"Something went worng")
+          setLoading(false)
+        }
+  }
   return (
     <div>
       {loading ?
@@ -58,7 +67,7 @@ function Form() {
         <Spinner size={100}/>
       </div>:
       <div>
-          <form onSubmit={submit}
+          <form onSubmit={!vis?submit:login}
       className="flex justify-center text-secondary flex-col item-center mt-4"
     >
       <h1 className="text-primary text-xl md:mb-3">{vis?"Login":"Sign up"}</h1>

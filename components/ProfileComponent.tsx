@@ -19,16 +19,41 @@ function ProfileComponent({name,id,image}:userType) {
       const [vis, setVis] = useState(false)
       const [updatedName, setUpddatedName] = useState("")
       const [updatedPassword, setUpdatedPassword] = useState("")
-      const {data:session} = useSession()
+      const {data:session,update} = useSession()
       const router = useRouter()
       
-      const update = async(e:any) =>{
+      const updateUser = async(e:any) =>{
             e.preventDefault()
             try {
                   const {data} = await axios.put(`/api/auth/client?id=${id}`,{name:updatedName,password:updatedPassword})
                   console.log(data);
+                  if(updatedName){
+                        update({name:updatedName})
+                  }
+                  if(updatedPassword){
+                        update({password:updatedPassword})
+                  }
                   router.push("/")
                   toast.success("Profile updated successfully")
+            } catch (error:any) {
+                  console.log(error);
+                  toast.error(error?.response?.data?error?.response?.data:"Something went worng")
+            }
+      }
+
+      const message = async() =>{
+            try {
+                  const {data} =await axios.post(`/api/chat/conversation`,{userId1:session?.user?.id,userId2:id})
+                  console.log("profile page convo " ,data);
+                  if(data.message == "Already exists"){
+                        router.push(`/user/${session?.user?.id}/${data.response.conversation.id}`)
+                        localStorage.setItem("name",data.response.user.name)
+                        localStorage.setItem("image",data.response.user.image)
+                  }
+                  else{
+                        toast.success("Convesation created successfully")
+                        router.push(`/user/${session?.user?.id}/${data.id}`)
+                  }
             } catch (error:any) {
                   console.log(error);
                   toast.error(error?.response?.data?error?.response?.data:"Something went worng")
@@ -39,10 +64,10 @@ function ProfileComponent({name,id,image}:userType) {
 
            {vis &&
                   <div>
-                       <form onClick={update} className="flex justify-center text-secondary flex-col item-center mt-4">
-                             <h1 className="text-primary text-xl md:mb-3">Profile</h1>
-                             {<Input name="Username" type="text" onChange={(e:any) => {setUpddatedName(e.target.value)}}/>}
-                             {<Input name="password" type="password" onChange={(e:any) => {setUpdatedPassword(e.target.value)}}/>}
+                       <form onSubmit={updateUser} className="flex justify-center text-secondary flex-col item-center mt-4">
+                             <h1 className="text-primary text-xl text-center md:mb-3">Update Profile</h1>
+                             {<Input required={false} name="Username" type="text" onChange={(e:any) => {setUpddatedName(e.target.value)}}/>}
+                             {<Input required={false} name="password" type="password" onChange={(e:any) => {setUpdatedPassword(e.target.value)}}/>}
            
                               <div className="w-full">
                                     <Button name="Update" type="submit" />
@@ -58,14 +83,14 @@ function ProfileComponent({name,id,image}:userType) {
             <div className="flex flex-col items-center w-full justify-center ">
                   <h1 className="md:text-xl my-3">User Profile</h1>
                   <img className="w-24 h-24 rounded-full" src={image} alt={name} />
-                  <h1 className="md:text-3xl capitalize my-6">{name}</h1>
+                  <h1 className="text-sm md:text-lg capitalize my-6 text-center">{name}</h1>
                   <div className="flex space-x-1 w-full">
-                        <div className="w-[50%]">
-                              <HandleButton name="Message" onClick={() =>router.push("/")}/>
+                  {id !=  session?.user?.id ? <div className="w-full">
+                              <HandleButton name="Message" onClick={message}/>
                         </div>
-                        <div className="w-[50%]">
+                         : <div className="w-full">
                               <HandleButton name="Edit" onClick={() =>setVis(!vis)}/>
-                        </div>
+                        </div>}
                   </div>
             </div>
       </div>}

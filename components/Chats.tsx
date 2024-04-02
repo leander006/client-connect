@@ -16,7 +16,7 @@ const {data} = await axios.get(`${env.BASE_URL}/api/chat/conversation?userId=${s
 
 
   return (
-      <div className="pt-16 md:px-12 h-screen">
+      <div className="pt-16 md:px-12 h-full">
         <div className='flex mx-2 md:hidden'>
             <Search/>
         </div>

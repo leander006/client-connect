@@ -50,7 +50,26 @@ export const POST =async (req: NextRequest) => {
 export const GET =async (req: NextRequest) => {
 
       const { query } = parse(req.url, true)
-        try {
+
+      try {
+
+            if(query.id){
+                  const user = await prisma.user.findUnique({
+                        where:{
+                              id:Number(query.id)
+                        },
+                        select:{
+                              id:true,
+                              name:true,
+                              image:true
+                        }
+                  })
+                  
+                  if(!user){
+                        return NextResponse.json("No user found",{status:401})
+                    }
+                  return NextResponse.json(user)  
+            }
               const users =await prisma.user.findMany({
                   where:{
                         OR: [
@@ -83,10 +102,11 @@ export const GET =async (req: NextRequest) => {
       const data = await req.json();
       const { query } = parse(req.url, true)
 
+      if(!data.password && !data.name){
+            return NextResponse.json(`Update either name or password`,{status:402}) 
+      }
         try {
-            //   if(!data.password || !data.name){
-            //       return NextResponse.json(`Enter all input field`,{status:402}) 
-            //   }
+
               let user = await prisma.user.findFirst({
                   where:{
                         OR:[

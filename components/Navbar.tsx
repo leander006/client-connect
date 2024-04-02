@@ -13,14 +13,14 @@ function Navbar() {
   const links = [
     {    id: 1, links: "/home",name:"home"},
     {    id: 2, links: "/invite",name:"invite" },
-    {    id: 3, links: "/profile",name:"profile" },
+    {    id: 3, links: `/profile/${session?.user?.id}`,name:"profile" },
   ];
   const [nav, setNav] = useState(false);
   
   return (
     <div className="flex justify-between items-center bg-background w-full shadow-xl z-50 fixed h-12 ">
       <div>
-        <Link href="/" className="ml-2 text-primary text-2xl md:text-4xl font-serif">Freeconnect</Link>
+        <Link href="/home" className="ml-2 text-primary text-2xl md:text-4xl font-serif">Freeconnect</Link>
       </div>
       <div className="hidden md:flex w-[40%] md:w-[30%] lg:w-[40%]">
             <Search/>
@@ -37,7 +37,7 @@ function Navbar() {
           </li>
         ))}
 
-        {session && <div onClick={() => signOut()} className="mx-2 cursor-pointer hover:scale-125 duration-300">Logout</div>}
+        {session && <div onClick={() => signOut({ callbackUrl: '/' })} className="mx-2 cursor-pointer hover:scale-125 duration-300">Logout</div>}
       </ul>
 
       <div
@@ -53,9 +53,9 @@ function Navbar() {
           <ul className="flex flex-col p-2 top-0 left-0 w-[75%] sm:w-[60%] md:w-[45%] bg-background h-screen text-white">
             <div className=" mt-4 w-full items-center">
               <div className="flex justify-between">
-                <h1 className="ml-2 text-primary text-2xl md:text-4xl font-serif">
+                <Link href="/home" className="ml-2 text-primary text-2xl md:text-4xl font-serif">
                   Freeconnect
-                </h1>
+                </Link>
                 <div
                   onClick={() => setNav(!nav)}
                   className="flex cursor-pointer text-black/60 justify-center md:hidden"
@@ -81,7 +81,7 @@ function Navbar() {
                 </li>
                 
               ))}
-            {session && <div onClick={() => signOut()} className="py-6 cursor-pointer hover:scale-125 duration-300">Logout</div>}
+            {session && <div onClick={() => signOut({ callbackUrl: '/' })} className="py-6 cursor-pointer hover:scale-125 duration-300">Logout</div>}
             </div>
           </ul>
         </div>

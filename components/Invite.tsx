@@ -20,9 +20,6 @@ const submit = async(e:any) =>{
     e.preventDefault()
     try {
         setLoading(true)
-        setTimeout(() => {
-          console.log("Action performed after delay");
-      }, 3000);
         await axios.post(`api/auth/client?name=${data?.user?.name}`,{email:email,userId:data?.user?.id})
         router.push(`/user/${data?.user?.id}`)
         toast.success("Client invited successfully")
@@ -37,7 +34,7 @@ const submit = async(e:any) =>{
     <div className="flex justify-center items-center h-full">
       <div className={`flex w-[91vw] bg-white rounded-lg lg:w-[400px]  md:w-[300px] md:justify-center ${loading && "h-48" }`}>
                 {!loading?<div className="flex flex-col w-full p-5">
-                        <Input type="email" name="email" onChange={(e:any) => setEmail(e.target.value)} />
+                        <Input type="email" name="Enter client's email" onChange={(e:any) => setEmail(e.target.value)} />
                         <div className=" bg-primary text-white items-center flex p-2 rounded-lg hover:bg-secondary my-2">
                               <button onClick={submit} type="button" className="w-full">Invite</button>
                         </div>

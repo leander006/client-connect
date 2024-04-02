@@ -2,9 +2,9 @@
 import { RecoilRoot } from "recoil";
 import { SessionProvider } from 'next-auth/react';
 
-export const Providers = ({children}: {children: React.ReactNode}) => {
+export const Providers = ({children,session}: {children: React.ReactNode,session:any}) => {
     return (
-    <SessionProvider>
+    <SessionProvider session={session}>
         <RecoilRoot>
             {children}
         </RecoilRoot>

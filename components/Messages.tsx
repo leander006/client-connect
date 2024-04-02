@@ -4,13 +4,14 @@ import Message from "./Message"
 import { IoSend } from "react-icons/io5";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useRecoilState} from "recoil";
 import { UserAtom } from "@/store/atoms/user";
 import { io } from "socket.io-client";
 import Spinner from "./Spinner";
 import ChatSkeleton from "./Skeleton/ChatSkeleton";
 import MessageSkeleton from "./Skeleton/MessageSkeleton";
+import { FaArrowLeft } from "react-icons/fa";
 
 let socket:any
 
@@ -23,7 +24,7 @@ function Messages() {
       const [loading, setLoading] = useState(false)
 
       const [data,setData] = useRecoilState(UserAtom)
-      
+      const router = useRouter()
       const port = process.env.SOCKET_URL
 
       const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -105,14 +106,18 @@ function Messages() {
           }
   return (
       <div className=" bg-secondary md:mx-36 md:my-2">
+
             {data ?<div className="bg-primary flex p-3 space-x-2 items-center">
+                  <div onClick={() =>{router.push("/home")}} className=" cursor-pointer">
+                        <FaArrowLeft color="#0042A3" size={24} />
+                  </div>
                   {data && <img className=" rounded-full h-6 w-6" src={data.image} alt={data.name}/>}
-                  <h1 className="md:text-xl capitalize">{data.name}</h1>
+                  <h1 className="text-sm md:text-lg capitalize">{data.name}</h1>
             </div>:
             <ChatSkeleton/>
             }
 
-            <div className="h-[80vh] md:h-[77vh] overflow-y-scroll px-6">
+            <div className="h-[80vh] md:h-[77vh] overflow-y-scroll md:px-6">
             {!loading ?messages.map((m:any) =>(
                   <Message key={m?.id} name={m?.sender?.name} id={m?.sender?.id} image={m?.sender?.image} text={m?.body}/>
             )):<div >
