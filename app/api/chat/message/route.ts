@@ -31,7 +31,7 @@ export const POST =async (req: NextRequest) => {
                 return NextResponse.json(message)   
       } catch (error) {
             console.log(error);
-            return NextResponse.json("Something went wrong",{status:501})
+            return NextResponse.json(error,{status:501})
       }
 }
 
@@ -78,7 +78,7 @@ export const GET = async (req: NextRequest) => {
             return NextResponse.json(message)   
         } catch (error) {
               console.log(error);
-              return NextResponse.json("Something went wrong",{status:501})
+              return NextResponse.json(error,{status:501})
         }
   }
  
