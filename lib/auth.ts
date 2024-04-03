@@ -3,15 +3,10 @@ import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
 import { env } from 'process';
 import axios from "axios"
-import { AuthOptions } from 'next-auth';
 
-export const auth : AuthOptions ={
+export const auth ={
   
       providers: [
-        GoogleProvider({
-          clientId: process.env.GOOGLE_CLIENT_ID || "",
-          clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-      }),
         CredentialsProvider({
           name: "Credentials",
           credentials: {
