@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { parse } from "url";
 
-export const POST = async (req: NextResponse) => {
+export const POST = async (req: NextRequest) => {
   const data = await req.json();
   console.log(req.cookies.get("data"));
   
