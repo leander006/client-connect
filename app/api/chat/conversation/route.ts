@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { create } from "@/lib/createConversation";
 import prisma from "@/lib/prisma";
-import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import { NextRequest, NextResponse } from "next/server";
 
 import { parse } from "url";
@@ -9,7 +9,7 @@ import { parse } from "url";
 export const POST = async (req: NextResponse) => {
   const data = await req.json();
   console.log(req.cookies.get("data"));
-
+  
   try {
     var newConversation:any = {};
     newConversation = await prisma.userConversationRelation.findFirst({
@@ -43,12 +43,10 @@ export const POST = async (req: NextResponse) => {
   }
 };
 
-export const GET = async (req:NextResponse) => {
+export const GET = async (req: NextRequest) => {
   const { query } = parse(req.url, true);
-  //   const session = await getServerSession(req, res, auth);
-  //   console.log("Providers", session);
-
-  console.log(req.cookies.getAll());
+  const session = await getServerSession(auth)
+  console.log("Providers", req);
 
   try {
     var conversation:any = {};

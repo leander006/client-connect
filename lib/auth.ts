@@ -3,8 +3,9 @@ import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
 import { env } from 'process';
 import axios from "axios"
+import { AuthOptions } from 'next-auth';
 
-export const auth ={
+export const auth : AuthOptions ={
   
       providers: [
         GoogleProvider({
@@ -37,6 +38,7 @@ export const auth ={
           },
         })
       ],
+      session: { strategy: "jwt" },
       secret: process.env.NEXTAUTH_SECRET,
       callbacks:{
         session:({session,token}: any ) =>{
@@ -50,6 +52,7 @@ export const auth ={
           
           return baseUrl
         }
+        
       },
       pages:{
             signIn:"/"

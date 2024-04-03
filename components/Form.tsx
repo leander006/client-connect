@@ -51,9 +51,9 @@ function Form() {
             redirect: false,
 
           })
-          toast.success("Login successfully!!!")
           const {data} : any = await axios.get(`/api/auth/freelancer?username=${username}&password=${password}`)
           router.push(`/user/${data.id}`);
+          toast.success("Login successfully!!!")
           setLoading(false)
         } catch (error:any) {
           console.log(error?.response?.data);
