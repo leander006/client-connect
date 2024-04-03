@@ -38,7 +38,6 @@ export const auth : AuthOptions ={
           },
         })
       ],
-      session: { strategy: "jwt" },
       secret: process.env.NEXTAUTH_SECRET,
       callbacks:{
         session:({session,token}: any ) =>{
