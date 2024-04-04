@@ -43,7 +43,7 @@ function Messages() {
                 socket?.off("connected",(name:any) =>{console.log(`${name} connected`);
             })
             };
-        }, [session]);
+        }, [session,conversationId,Endpoint]);
 
         useEffect(() => {
             socket?.on("get_Message", (messageReceived:any) => {
@@ -57,22 +57,24 @@ function Messages() {
             }
         });
         
-      const getMessages = async() =>{
-            try {
-                  setLoading(true)
-                  const res = await axios.get(`/api/chat/message?id=${conversationId}`)
-                  setData({name:localStorage.getItem("name")||"",image:localStorage.getItem("image")||""})
-                  setMessages(res.data);
-                  setLoading(false)
-            } catch (error) {
-                  console.log(error);
-                  setLoading(false)
-            }
-      }  
+
       
 
       useEffect(() => {
+            const getMessages = async() =>{
+                  try {
+                        setLoading(true)
+                        const res = await axios.get(`/api/chat/message?id=${conversationId}`)
+                        setData({name:localStorage.getItem("name")||"",image:localStorage.getItem("image")||""})
+                        setMessages(res.data);
+                        setLoading(false)
+                  } catch (error) {
+                        console.log(error);
+                        setLoading(false)
+                  }
+            } 
             getMessages()
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       }, [Endpoint,conversationId])
 
       const sendMessage = async() =>{

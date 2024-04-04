@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import bcrypt from "bcrypt"
-import { env } from 'process'
+import bcrypt from "bcryptjs"
 import { parse } from "url";
 import prisma from '@/lib/prisma';
 
@@ -42,7 +41,7 @@ export const GET = async(req: NextRequest) => {
 }
 
 export const POST =async (req: NextRequest) => {
-      console.log("post request");
+
       
     const data = await req.json();
       try {
@@ -66,7 +65,7 @@ export const POST =async (req: NextRequest) => {
                   data:{
                         name:data.username,
                         email:data.email,
-                        password: await bcrypt.hash(data.password, Number(env?.SALT) || 0 ) 
+                        password: await bcrypt.hash(data.password,process.env.SALT||0)
                   }
                 })
                 return NextResponse.json("User created please login")   

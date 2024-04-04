@@ -1,6 +1,6 @@
 
 import { NextRequest, NextResponse } from 'next/server'
-import bcrypt from "bcrypt"
+import bcrypt from "bcryptjs"
 import { env } from 'process'
 import { parse } from "url";
 import { randomUUID } from 'crypto'

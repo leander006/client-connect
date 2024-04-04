@@ -8,7 +8,7 @@ import { parse } from "url";
 
 export const POST = async (req: NextRequest) => {
   const data = await req.json();
-  console.log(req.cookies.get("data"));
+  // console.log(req.cookies.get("data"));
   
   try {
     var newConversation:any = {};
@@ -45,8 +45,8 @@ export const POST = async (req: NextRequest) => {
 
 export const GET = async (req: NextRequest) => {
   const { query } = parse(req.url, true);
-  const session = await getServerSession(auth)
-  console.log("Providers", req);
+  // const session = await getServerSession(auth)
+  // console.log("Providers", req);
 
   try {
     var conversation:any = {};
