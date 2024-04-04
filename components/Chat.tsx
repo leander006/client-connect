@@ -8,7 +8,6 @@ async function Chat({p}:any) {
   
 const session = await getServerSession(auth)
 
-
   return (
     <div className="h-full space-y-2 overflow-y-scroll mx-2 ">
             {p?.map((c:any) =>(

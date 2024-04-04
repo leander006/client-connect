@@ -5,7 +5,6 @@ import { env } from 'process';
 import { getServerSession } from 'next-auth';
 import { auth } from '@/lib/auth';
 import SendInvite from './SendInvite';
-import Search from './Search';
 
 
 async function Chats() {
