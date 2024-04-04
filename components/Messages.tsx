@@ -73,7 +73,7 @@ function Messages() {
 
       useEffect(() => {
             getMessages()
-      }, [])
+      }, [Endpoint,conversationId])
 
       const sendMessage = async() =>{
             try {

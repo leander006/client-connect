@@ -11,6 +11,7 @@ import Search from './Search';
 async function Chats() {
 
 const session = await getServerSession(auth)
+console.log("session in chats ",session);
 
 const {data} = await axios.get(`${env.BASE_URL}/api/chat/conversation?userId=${session?.user.id}`)
 
