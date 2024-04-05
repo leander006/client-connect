@@ -21,6 +21,8 @@ Before you begin, ensure you have the following installed on your machine:
 - PNPM (version >= 6.0.0)
 - POSTGRES (running locally or accessible remotely)
 
+ <a href="https://client-share.vercel.app" target="_blank"> Live </a>
+
 ### Steps
 
 1. Clone the repository:
