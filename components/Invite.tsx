@@ -3,8 +3,6 @@
 import { useState } from "react"
 import Input from "./Input"
 import axios from "axios"
-import { SpinnerCircular } from "spinners-react";
-import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast";
 import Spinner from "./Spinner";
@@ -13,15 +11,15 @@ import Spinner from "./Spinner";
 
 function Invite() {
 const [email, setEmail] = useState("")
-const {data} = useSession()
+
 const [loading, setLoading] = useState(false)
 const router = useRouter()
 const submit = async(e:any) =>{
     e.preventDefault()
     try {
         setLoading(true)
-        await axios.post(`api/auth/client?name=${data?.user?.name}`,{email:email,userId:data?.user?.id})
-        router.push(`/user/${data?.user?.id}`)
+        await axios.post(`api/auth/client`,{email:email})
+        router.push(`/`)
         toast.success("Client invited successfully")
         setLoading(false)
     } catch (error:any) {

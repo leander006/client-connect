@@ -9,6 +9,8 @@ import HandleButton from "./HandleButton";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import { updateClient } from "@/lib/actions/client";
+import { createConversation } from "@/lib/actions/conversation";
 
 interface userType{
       name:string,
@@ -25,40 +27,29 @@ function ProfileComponent({name,id,image}:userType) {
       
       const updateUser = async(e:any) =>{
             e.preventDefault()
-            try {
-                  const {data} = await axios.put(`/api/auth/client?id=${id}`,{name:updatedName,password:updatedPassword})
-                  console.log(data);
+                  const res :any = await updateClient(updatedName,updatedPassword)
+                  console.log(res.message);
                   if(updatedName){
                         update({name:updatedName})
                   }
                   if(updatedPassword){
                         update({password:updatedPassword})
                   }
-                  router.push("/")
+                  // router.push("/")
+                  setVis(!vis)
+                  if(res.status == 401 || res.status == 502){
+                        return toast.error(res.message)
+                  }
                   toast.success("Profile updated successfully")
-            } catch (error:any) {
-                  console.log(error);
-                  toast.error(error?.response?.data?error?.response?.data:"Something went worng")
-            }
       }
 
       const message = async() =>{
-            try {
-                  const {data} =await axios.post(`/api/chat/conversation`,{userId1:session?.user?.id,userId2:id})
-                  console.log("profile page convo " ,data);
-                  if(data.message == "Already exists"){
-                        router.push(`/user/${session?.user?.id}/${data.response.conversation.id}`)
-                        localStorage.setItem("name",data.response.user.name)
-                        localStorage.setItem("image",data.response.user.image)
-                  }
-                  else{
-                        toast.success("Convesation created successfully")
-                        router.push(`/user/${session?.user?.id}/${data.id}`)
-                  }
-            } catch (error:any) {
-                  console.log(error);
-                  toast.error(error?.response?.data?error?.response?.data:"Something went worng")
-            }
+            
+            const res:any = await createConversation(id)
+            // console.log("res from client ",res);
+            router.push(`/user/${session?.user?.id}/${res.message.conversationId}`)
+            localStorage.setItem("name",res.message.user.name)
+            localStorage.setItem("image",res.message.user.image)
       }
   return (
       <div className={`flex flex-col p-3 w-[91vw] h-fit lg:w-[400px] md:w-[300px] bg-white rounded-lg md:justify-center`}>

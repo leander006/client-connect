@@ -1,18 +1,26 @@
-import prisma from '@/lib/prisma';
-import { NextRequest, NextResponse } from 'next/server'
-import { parse } from "url";
+"use server";
+
+import { getServerSession } from "next-auth";
+import { auth } from "../auth";
+import prisma from "../prisma";
 
 
-export const POST =async (req: NextRequest) => {    
-    const data = await req.json();
-    const { query } = parse(req.url, true)
 
+export async function createMessage(body:string,id:Number){
       try {
+            const session = await getServerSession(auth);
+            if (!session?.user || !session.user?.id) {
+              return {
+                message: "Unauthenticated request",
+                status:401
+              };
+            }
+
             const message = await prisma.message.create({
                   data: {
-                    body:data.body,
-                    senderId: Number(query.userId),
-                    conversationId: Number(query.id)
+                    body:body,
+                    senderId: Number(session.user?.id),
+                    conversationId: Number(id)
                   },
                   include:{
                         sender:true,
@@ -28,24 +36,32 @@ export const POST =async (req: NextRequest) => {
                   }
                 });
 
-                return NextResponse.json(message)   
+                return {message:message,status:201}
       } catch (error) {
             console.log(error);
-            return NextResponse.json(error,{status:501})
+            return {message: error,status:502}
       }
 }
 
-export const GET = async (req: NextRequest) => {
-      const { query } = parse(req.url, true)
-      // console.log("query from id ",query.id);
-      // console.log(req);
-      
+export async function getMessage(id:Number){
+
         try {
+
+            const session = await getServerSession(auth);
+            // console.log("session from message ",session?.user);
+            
+            if (!session?.user || !session.user?.id) {
+              return {
+                message: "Unauthenticated request",
+                status:402
+              };
+            }
+
             var message: any = {}            
-            if(query.id != null){
+            if(id != null){
                   message = await prisma.message.findMany({
                         where:{
-                              conversationId: Number(query.id)
+                              conversationId: Number(id)
                         },
                         include:{
                               sender:true,
@@ -60,8 +76,10 @@ export const GET = async (req: NextRequest) => {
                               }
                         }
                     })
+                  //   console.log("message ",message);
+                    
                     if(message == null){
-                        return NextResponse.json("message with above id does not exist",{status:402}) 
+                        return {message:"message with above id does not exist",status:401}
                     }
             }
             else{
@@ -71,15 +89,13 @@ export const GET = async (req: NextRequest) => {
                         }
                   })
             }
-            const filteredArray:[]  = message[0]?.conversation?.users.filter((u:any) => u.userId === query.userId)
-            if(filteredArray?.length > 0){
-                  return NextResponse.json("Not authenticated",{status:402})   
-            }
-            return NextResponse.json(message)   
+            // const filteredArray:[]  = message[0]?.conversation?.users.filter((u:any) => u.userId === query.userId)
+            // if(filteredArray?.length > 0){
+            //       return NextResponse.json("Not authenticated",{status:402})   
+            // }
+            return {message:message,status:200} 
         } catch (error) {
               console.log(error);
-              return NextResponse.json(error,{status:501})
+              return {message:error,status:502}
         }
-  }
- 
-  
+}

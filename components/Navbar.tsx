@@ -22,9 +22,9 @@ function Navbar() {
       <div>
         <Link href="/home" className="ml-2 text-primary text-2xl md:text-4xl font-serif">Freeconnect</Link>
       </div>
-      {/* <div className="hidden md:flex w-[40%] md:w-[30%] lg:w-[40%]">
+      <div className="hidden md:flex w-[40%] md:w-[30%] lg:w-[40%]">
             <Search/>
-      </div> */}
+      </div>
       <ul className="hidden md:flex">
         {links.map(({ links, id,name }) => (
           <li

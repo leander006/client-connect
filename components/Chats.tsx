@@ -5,15 +5,12 @@ import { env } from 'process';
 import { getServerSession } from 'next-auth';
 import { auth } from '@/lib/auth';
 import SendInvite from './SendInvite';
+import { getConversation } from '@/lib/actions/conversation';
 
 
 async function Chats() {
 
-const session = await getServerSession(auth)
-console.log("session in chats ",session);
-
-const {data} = await axios.get(`${env.BASE_URL}/api/chat/conversation?userId=${session?.user.id}`)
-
+const res = await getConversation()
 
   return (
       <div className="pt-16 md:px-12 h-full">
@@ -21,8 +18,7 @@ const {data} = await axios.get(`${env.BASE_URL}/api/chat/conversation?userId=${s
             <Search/>
         </div> */}
       <div className="h-[70%] pt-2">
-          {data.length != 0 ? <Chat p={data}/>:<div className='flex justify-center h-full md:text-xl items-center'>No conversations</div>}
-
+            {res.message.length != 0 ? <Chat p={res.message}/>:<div className='flex justify-center h-full md:text-xl items-center'>No conversations</div>}
       </div>
       <div className="h-[30%] flex items-center justify-center">
           <SendInvite/>

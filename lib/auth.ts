@@ -35,8 +35,11 @@ export const auth ={
       ],
       secret: process.env.NEXTAUTH_SECRET,
       callbacks:{
-        session:({session,token}: any ) =>{
-          
+        session:({session,token,trigger,newSession}: any ) =>{
+          if (trigger === "update" && newSession?.name) {
+            session.name = newSession.name
+            session.password = newSession.password
+          }
           if (session?.user) {
             session.user.id = token.sub
           }

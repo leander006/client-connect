@@ -2,7 +2,6 @@
 import { useEffect, useRef, useState } from "react"
 import Message from "./Message"
 import { IoSend } from "react-icons/io5";
-import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { useRecoilState} from "recoil";
@@ -13,6 +12,7 @@ import ChatSkeleton from "./Skeleton/ChatSkeleton";
 import MessageSkeleton from "./Skeleton/MessageSkeleton";
 import { FaArrowLeft } from "react-icons/fa";
 import Image from "next/image";
+import { createMessage, getMessage } from "@/lib/actions/message";
 
 let socket:any
 
@@ -61,27 +61,29 @@ function Messages() {
       
 
       useEffect(() => {
-            const getMessages = async() =>{
+            const messages = async() =>{
                   try {
                         setLoading(true)
-                        const res = await axios.get(`/api/chat/message?id=${conversationId}`)
+                        const data= await getMessage(Number(conversationId))
+                        // console.log("message ",data.message);
                         setData({name:localStorage.getItem("name")||"",image:localStorage.getItem("image")||""})
-                        setMessages(res.data);
+                        setMessages(data.message);
                         setLoading(false)
                   } catch (error) {
                         console.log(error);
                         setLoading(false)
                   }
             } 
-            getMessages()
+            messages()
       // eslint-disable-next-line react-hooks/exhaustive-deps
       }, [Endpoint,conversationId])
 
       const sendMessage = async() =>{
             try {
-                  const {data} = await axios.post(`/api/chat/message?userId=${session?.user?.id}&id=${conversationId}`,{body:message})
-                  socket?.emit("send_message",{messageRecieved:data,room:conversationId})
-                  setMessages([...messages,data])
+                  // const {data} = await axios.post(`/api/chat/message?userId=${session?.user?.id}&id=${conversationId}`,{body:message})
+                  const res = await createMessage(message,Number(conversationId))
+                  socket?.emit("send_message",{messageRecieved:res.message,room:conversationId})
+                  setMessages([...messages,res.message])
                   setMessage("")
             } catch (error) {
                  console.log(error);
@@ -114,7 +116,7 @@ function Messages() {
                   <div onClick={() =>{router.push("/home")}} className=" cursor-pointer">
                         <FaArrowLeft color="#0042A3" size={24} />
                   </div>
-                  {data && <Image width={12} height={12} className=" rounded-full h-6 w-6" src={data.image} alt={data.name}/>}
+                  {data && <Image width={12} height={12} className=" rounded-full h-6 w-6" src={data?.image?data?.image:""} alt={data.name}/>}
                   <h1 className="text-sm md:text-lg capitalize">{data.name}</h1>
             </div>:
             <ChatSkeleton/>

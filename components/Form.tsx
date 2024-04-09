@@ -9,6 +9,7 @@ import axios from "axios";
 import Input from "./Input";
 import toast from "react-hot-toast";
 import Spinner from "./Spinner";
+import { createFreelancer, getFreelancer } from "@/lib/actions/freelancer";
 
 
 function Form() {
@@ -22,44 +23,32 @@ function Form() {
   
   const submit = async(e: React.FormEvent<HTMLFormElement>) =>{
     e.preventDefault();
-    try {
-      setLoading(true)
-
-      await axios.post(`/api/auth/freelancer`,{
-        username:username,
-        email:email,
-        password:password
-      });
-
-      toast.success("Account created successfully")
-      setLoading(false)
-    } catch (error:any) {
-      console.log(error?.response?.data);
-      toast.error(error?.response?.data?error?.response?.data:"Something went worng")
-      setLoading(false)
+    setLoading(true)
+    const res:any = await createFreelancer(email,username,password)          
+    setLoading(false)
+    if(res.status == 401 || res.status == 502){
+      return toast.error(res.message)
     }
-
+    toast.success(res.message)
   }
 
   const login = async (e: React.FormEvent<HTMLFormElement>) =>{
         e.preventDefault();
-        try {
           setLoading(true)
+          const res:any = await getFreelancer(username,password)          
           await signIn("credentials", {
             username: username,
             password: password,
             redirect: false,
 
           })
-          const {data} : any = await axios.get(`/api/auth/freelancer?username=${username}&password=${password}`)
-          router.push(`/user/${data.id}`);
-          toast.success("Login successfully!!!")
           setLoading(false)
-        } catch (error:any) {
-          console.log(error?.response?.data);
-          toast.error(error?.response?.data?error?.response?.data:"Something went worng")
-          setLoading(false)
-        }
+
+          if(res.status == 401 || res.status == 502){
+            return toast.error(res.message)
+          }
+          router.push(`/user/${res.message.id}`);
+          toast.success("Login successfully")
   }
   return (
     <div>
@@ -72,7 +61,10 @@ function Form() {
       className="flex justify-center text-secondary flex-col item-center mt-4"
     >
       <h1 className="text-primary text-xl md:mb-3">{vis?"Login":"Sign up"}</h1>
-
+      <div className="text-primary my-3">
+        <h1>Username: leander06</h1>
+        <h1>Password:12345</h1>
+        </div>
         <Input name="Username" type="text" onChange={(e:any) => setUsername(e.target.value)}/>
         {!vis&& <Input name="Email" type="text" onChange={(e:any) => setEmail(e.target.value)}/>}
         <Input name="password" type="password" onChange={(e:any) => setPassword(e.target.value)}/>
