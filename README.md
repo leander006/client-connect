@@ -25,11 +25,26 @@ Before you begin, ensure you have the following installed on your machine:
 
 ### Steps
 
-1. Clone the repository:
+1. Docker image from docker hub
+
+```
+docker pull bitcoin06/mlm-fellowship:latest
+docker run -d -p 3000:3000 bitcoin06/mlm-fellowship
+```
+
+2. Local dockerfile
+   
+```
+docker build -t demo .
+docker run -d -p 3000:3000 demo
+```
+
+3. Clone the repository:
 
 ```
 git clone https://github.com/leander006/client-connect.git
 cd client-freelancer-chatting-website
+RUN npm install -g pnpm
 pnpm install
 pnpm run dev
 
