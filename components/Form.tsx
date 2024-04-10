@@ -5,7 +5,6 @@ import { useState } from "react"
 import Button from "./Button"
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import axios from "axios";
 import Input from "./Input";
 import toast from "react-hot-toast";
 import Spinner from "./Spinner";

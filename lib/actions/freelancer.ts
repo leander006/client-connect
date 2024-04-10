@@ -2,12 +2,44 @@
 
 import bcrypt from "bcryptjs"
 import prisma from "../prisma";
+import { z } from "zod";
+
+const createSchema = z.object({
+      name:z.string().min(1),
+      email: z
+      .string()
+      .email(),
+      password:z.string().min(1)
+});
+
+const getSchema = z.object({
+      username:z.string().min(1),
+      password:z.string().min(1)
+});
+
 
 export async function createFreelancer(
       email: string,
       name:string,
       password:string
     ) {
+
+      const body={
+            name,
+            email,
+            password
+      }
+
+      const {success} = createSchema.safeParse(body);
+
+      if(!success){
+            return {
+                  message: "Enter valid email or username address",
+                  status:401
+            };
+      }
+
+
       const salt : any=process.env.SALT
       try {
             const user =  await prisma.user.findFirst({
@@ -45,10 +77,20 @@ export async function getFreelancer(
       password:string,
     ) {
 
-
-      if(username == undefined || password == undefined){
-            return {message: "Enter email and password",status:401 }
+      const body={
+            username,
+            password
       }
+      
+      const {success} = getSchema.safeParse(body);
+      
+      if(!success){
+            return {
+                  message: "Enter valid username",
+                  status:401
+            };
+      }
+
         try {
               const user = await prisma.user.findFirst({
                   where:{
@@ -70,7 +112,6 @@ export async function getFreelancer(
             if(!validate){
                   return { message:"Enter correct password",status:401  } 
             }
-            console.log("done with api call");
             
             return {message:user,status:200} 
         } catch (error) {

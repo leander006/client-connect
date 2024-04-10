@@ -4,10 +4,31 @@ import { getServerSession } from "next-auth";
 import { auth } from "../auth";
 import prisma from "../prisma";
 
+import z from "zod"
 
+const createSchema = z.object({
+      body:z.string().min(1),
+      id:z.number().min(1) 
+});
 
 export async function createMessage(body:string,id:Number){
       try {
+
+            const data={
+                  body,
+                  id
+            }
+      
+            const {success} = createSchema.safeParse(data);
+      
+            if(!success){
+                  return {
+                        message: "Enter valid message address",
+                        status:401
+                  };
+            }
+
+            
             const session = await getServerSession(auth);
             if (!session?.user || !session.user?.id) {
               return {

@@ -44,7 +44,7 @@ function ProfileComponent({name,id,image}:userType) {
       }
 
       const message = async() =>{
-            
+
             const res:any = await createConversation(id)
             // console.log("res from client ",res);
             router.push(`/user/${session?.user?.id}/${res.message.conversationId}`)
@@ -58,8 +58,8 @@ function ProfileComponent({name,id,image}:userType) {
                   <div>
                        <form onSubmit={updateUser} className="flex justify-center text-secondary flex-col item-center mt-4">
                              <h1 className="text-primary text-xl text-center md:mb-3">Update Profile</h1>
-                             {<Input required={false} name="Username" type="text" onChange={(e:any) => {setUpddatedName(e.target.value)}}/>}
-                             {<Input required={false} name="password" type="password" onChange={(e:any) => {setUpdatedPassword(e.target.value)}}/>}
+                             {<Input needed={false} name="Username" type="text" onChange={(e:any) => {setUpddatedName(e.target.value)}}/>}
+                             {<Input needed={false} name="password" type="password" onChange={(e:any) => {setUpdatedPassword(e.target.value)}}/>}
            
                               <div className="w-full">
                                     <Button name="Update" type="submit" />

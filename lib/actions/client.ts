@@ -7,61 +7,72 @@ import { auth } from "../auth";
 import { sendMail } from "../sendEmail";
 import bcrypt from "bcryptjs"
 
+import { z } from "zod";
+
+const createSchema = z.string().email();
+
+
+const updateSchema = z.object({
+      name:z.string().min(1),
+      password:z.string().min(1)
+});
 
 export async function createClient(
   email: string,
 ) {
-      const session = await getServerSession(auth);
-      const salt :any=process.env.SALT
+
+      try {
+            createSchema.parse(email);
+            const session = await getServerSession(auth);
+            const salt :any=process.env.SALT
+
       if (!session?.user || !session.user?.id) {
-        return {
-          message: "Unauthenticated request",
-          status:401
-        };
+            return {
+              message: "Unauthenticated request",
+              status:401
+            };
       }
       var pass= randomUUID()
       var username = randomUUID()
-        try {
-              
-              if(!email){
-                    return { message:"Please fill email field",status:401 }
+
+      let user = await prisma.user.findFirst({
+              where:{
+                    email
               }
-  
-              let user = await prisma.user.findFirst({
-                    where:{
-                          email
-                    }
-              })
-  
-              if(user){
-                    return { message:`User with above email exists with username ${user.name}`,status:401 }
-              }
-              user = await prisma.user.create({
-                    data:{
-                          email,
-                          name:username,
-                          password: await bcrypt.hash(pass, Number(salt)) 
-                    }
-                  })
-                  const newConversation = await prisma.conversation.create({});
-                  await prisma.userConversationRelation.createMany({
-                    data: [
-                      {
-                        userId: Number(user.id),
-                        conversationId: newConversation.id
-                      },
-                      {
-                        userId:Number(session.user?.id),
-                        conversationId: newConversation.id
+        })
+
+            if(user){
+                  return { message:`User with above email exists with username ${user.name}`,status:401 }
+            }
+                user = await prisma.user.create({
+                      data:{
+                            email,
+                            name:username,
+                            password: await bcrypt.hash(pass, Number(salt)) 
                       }
-                    ]
-                  });
-                  await sendMail({email:email,subject:`${session.user?.name} from freeconnect `,para:`${session.user?.name} wants you to join freeconnect to discuss about your project <br></br> Please use ${username} as username and ${pass} as your password and change it to be projected from hackers`,title:`${session.user?.name} from freeconnect `,link:`${process.env.BASE_URL}`})
-                  return {message: `Email send to ${email}`,status:201 }   
-        } catch (error) {
-              console.log(error);
-              return { message:error,status:502 }
-        }
+                    })
+                    const newConversation = await prisma.conversation.create({});
+                    await prisma.userConversationRelation.createMany({
+                      data: [
+                        {
+                          userId: Number(user.id),
+                          conversationId: newConversation.id
+                        },
+                        {
+                          userId:Number(session.user?.id),
+                          conversationId: newConversation.id
+                        }
+                      ]
+                    });
+            await sendMail({email:email,subject:`${session.user?.name} from freeconnect `,para:`${session.user?.name} wants you to join freeconnect to discuss about your project <br></br> Please use ${username} as username and ${pass} as your password and change it to be projected from hackers`,title:`${session.user?.name} from freeconnect `,link:`${process.env.BASE_URL}`})
+            return {message: `Email send to ${email}`,status:201 }   
+      } catch (error:any) {
+            return {
+                  message: "Invalid email",
+                  status:401
+            };
+      }
+
 }
 
 export async function getClient(
@@ -125,6 +136,20 @@ export async function updateClient(
       name: string,
       password:string,
 ){
+      const body = {
+            name,
+            password
+      }
+      const {success} = updateSchema.safeParse(body);
+
+      if(!success){
+            return {
+                  message: "Enter valid username or password",
+                  status:401
+            };
+      }
+
+
       const session = await getServerSession(auth);
       if (!session?.user || !session.user?.id) {
         return {

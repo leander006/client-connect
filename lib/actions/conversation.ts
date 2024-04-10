@@ -3,11 +3,32 @@
 import { getServerSession } from "next-auth";
 import { auth } from "../auth";
 import prisma from "../prisma";
+import { z } from "zod";
+
+
+
+const createSchema = z.object({
+  id:z.number().min(1),
+});
 
 
 
 export async function createConversation(userId1:Number){
       try {
+
+        const data={
+          id:userId1
+        }
+
+        const {success} = createSchema.safeParse(data);
+
+    if(!success){
+          return {
+                message: "Error in userId",
+                status:401
+          };
+    }
+
             const session = await getServerSession(auth);
             if (!session?.user || !session.user?.id) {
               return {
@@ -17,6 +38,9 @@ export async function createConversation(userId1:Number){
             }
             
             const conversation = await prisma.conversation.findFirst({
+              orderBy:{
+                createdAt: 'desc',
+              },
               where: {
                 users: {
                   every: {
@@ -24,8 +48,7 @@ export async function createConversation(userId1:Number){
                       in: [Number(userId1),Number(session?.user?.id)],
                     },
                   },
-                },
-                
+                }
               },
               select:{
                 users:{
@@ -64,6 +87,9 @@ export async function createConversation(userId1:Number){
             );
 
             const newConvo= await prisma.conversation.findFirst({
+              orderBy:{
+                createdAt: 'desc',
+              },
               where:{
                 id:newConversation.id
               },
@@ -100,6 +126,9 @@ export async function getConversation(){
             var conversation:any = {};
             if (session?.user?.id != null) {
               conversation = await prisma.userConversationRelation.findMany({
+                orderBy:{
+                  assignedAt:"desc"
+                },
                 where: {
                   userId: Number(session.user?.id),
                 },
@@ -120,6 +149,9 @@ export async function getConversation(){
               }
             } else {
               conversation = await prisma.conversation.findMany({
+                orderBy:{
+                  createdAt: 'desc',
+                },
                 include: {
                   users: {
                     select: {
