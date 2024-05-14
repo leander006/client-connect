@@ -1,9 +1,5 @@
 import React from 'react'
 import Chat from './Chat'
-import axios from 'axios';
-import { env } from 'process';
-import { getServerSession } from 'next-auth';
-import { auth } from '@/lib/auth';
 import SendInvite from './SendInvite';
 import { getConversation } from '@/lib/actions/conversation';
 
